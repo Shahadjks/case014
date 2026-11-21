@@ -2,56 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>How to Read a Fundus Photo in 5 Steps</title>
-<meta property="og:title" content="How to Read a Fundus Photo in 5 Steps">
-<meta property="og:description" content="A quick, interactive guide for exams and OSCEs.">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Read a Fundus Photo in 5 Steps</title>
+<meta property="og:title" content="Read a Fundus Photo in 5 Steps">
+<meta property="og:description" content="Tap, zoom and learn how to read a fundus photo, one step at a time.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Courier+Prime:wght@400;700&display=swap">
 <style>
-:root{--navy:#0F1B2D;--or:#E8743B;--red:#A4161A;--yel:#F6C453;--cr:#FFF4E6;--mut:#C9C2B8;--card:#1B2A40}
+:root{--navy:#0F1B2D;--or:#E8743B;--red:#A4161A;--yel:#F6C453;--cr:#FFF4E6;--mut:#C9C2B8;--card:#1B2A40;--ok:#2E7D4F}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--navy);color:var(--cr);font-family:Montserrat,system-ui,sans-serif}
 body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-.app{max-width:520px;margin:0 auto;padding:22px 18px 40px;display:flex;flex-direction:column;gap:22px}
+.app{max-width:520px;margin:0 auto;padding:18px 18px 40px;display:flex;flex-direction:column;gap:18px}
 .mono{font-family:'Courier Prime',monospace;letter-spacing:.14em}
-header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
-h1{margin:0;font-weight:800;font-size:34px;line-height:1.02;letter-spacing:-.5px}
-h1 span{color:var(--or)}
+header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+h1{margin:0;font-weight:800;font-size:32px;line-height:1.04;letter-spacing:-.5px}h1 span{color:var(--or)}
 h2{margin:0;font-size:22px;font-weight:800}
 p{margin:0;font-size:16px;line-height:1.55;color:var(--mut)}
 .kick{color:var(--yel);font-size:12px}
-.stage{position:relative;width:100%;max-width:420px;margin:0 auto}
-.stage svg#fundus{width:100%;height:auto;display:block;border-radius:50%}
-.hot{position:absolute;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:20px;border:3px solid var(--yel);background:rgba(15,27,45,.85);color:var(--yel);font:800 17px Montserrat,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:ping 1.8s infinite}
-.hot.seen{animation:none;background:var(--yel);color:var(--navy)}
-.hot:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.prog{display:flex;gap:6px}.prog i{width:28px;height:8px;border-radius:4px;background:#2a3a52;transition:background .3s}.prog i.on{background:var(--yel)}
+.snd{appearance:none;border:2px solid #3A4A60;background:none;color:var(--cr);border-radius:999px;padding:6px 12px;font:600 13px Montserrat,sans-serif;min-height:38px;cursor:pointer}
+.lens{position:relative;width:100%;max-width:430px;margin:0 auto;aspect-ratio:1/1;border-radius:50%;overflow:hidden;box-shadow:0 0 0 6px #1B2A40,0 0 0 8px #2a3a52}
+.lens .zoom{position:absolute;inset:0;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.lens svg#fundus{width:100%;height:100%;display:block}
+.hot{position:absolute;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:21px;border:3px solid var(--yel);background:rgba(15,27,45,.85);color:var(--yel);font:800 17px Montserrat,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:ping 1.8s infinite;transition:opacity .3s}
+.hot.done{animation:none;background:var(--yel);color:var(--navy)}
+.lens.zoomed .hot{opacity:0;pointer-events:none}
+.hot:focus-visible,.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--or);outline-offset:3px}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(246,196,83,.6)}100%{box-shadow:0 0 0 14px rgba(246,196,83,0)}}
+.ring{position:absolute;left:50%;top:50%;width:46%;aspect-ratio:1/1;transform:translate(-50%,-50%) scale(.6);border:5px solid var(--yel);border-radius:50%;opacity:0;pointer-events:none;transition:all .5s .4s}
+.lens.zoomed .ring{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .hint{text-align:center;font-size:14px}
-.step{background:var(--cr);color:var(--navy);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
-.step .num{font:700 12px 'Courier Prime',monospace;letter-spacing:.16em;color:var(--red)}
-.step h3{margin:0;font-size:21px}
-.step ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.5}
-.step .tip{background:#f3e7d4;border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5}
-.steps{display:flex;flex-direction:column;gap:14px}
-.check{background:var(--card);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
-.check label{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.45;cursor:pointer;padding:4px 0}
-.check input{width:22px;height:22px;accent-color:var(--yel);flex:0 0 22px;margin-top:1px}
-.check .bar{height:8px;border-radius:4px;background:#0f1b2d;overflow:hidden}
-.check .bar i{display:block;height:100%;width:0;background:var(--yel);transition:width .3s}
-table{width:100%;border-collapse:collapse;font-size:15px}
-td{padding:10px 8px;border-bottom:1px solid #2a3a52;vertical-align:top}
-td:first-child{color:var(--yel);font-weight:700;width:42%}
-.cta{background:linear-gradient(0deg,#16243a,#16243a);border:2px solid var(--yel);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
-.btn{appearance:none;border:0;border-radius:999px;background:var(--yel);color:var(--navy);font:800 17px Montserrat,sans-serif;padding:15px 24px;min-height:52px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:100%;max-width:360px}
-.btn.wa{background:#25D366;color:#06301A}
-.btn:focus-visible{outline:3px solid var(--or);outline-offset:3px}
-.note{font-size:12px;color:#8a97ab;text-align:center;line-height:1.5}
+.sheet{background:var(--cr);color:var(--navy);border-radius:20px;padding:18px;display:none;flex-direction:column;gap:12px;animation:up .35s ease-out}
+.sheet.on{display:flex}
+@keyframes up{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.sheet .num{font:700 12px 'Courier Prime',monospace;letter-spacing:.16em;color:var(--red)}
+.sheet h3{margin:0;font-size:22px}
+.facts{display:flex;flex-direction:column;gap:8px}
+.fact{display:flex;gap:10px;font-size:15px;line-height:1.5;opacity:0;transform:translateY(6px);animation:in .4s forwards}
+.fact b{color:var(--red)}
+.fact::before{content:"";flex:0 0 8px;height:8px;border-radius:4px;background:var(--or);margin-top:8px}
+@keyframes in{to{opacity:1;transform:none}}
+.quiz{background:#f3e7d4;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.quiz .q{font-weight:800;font-size:16px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{appearance:none;border:2px solid #d8c7ad;background:#fff;color:var(--navy);border-radius:12px;padding:12px 8px;min-height:52px;font:700 14px Montserrat,sans-serif;cursor:pointer;transition:transform .15s}
+.opt:active{transform:scale(.97)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}.opt.no{background:var(--red);border-color:var(--red);color:#fff;animation:shk .3s}
+@keyframes shk{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fb{font-size:15px;font-weight:600;min-height:22px}
+.btn{appearance:none;border:0;border-radius:999px;background:var(--navy);color:var(--cr);font:800 16px Montserrat,sans-serif;padding:14px 22px;min-height:50px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:100%}
+.btn.y{background:var(--yel);color:var(--navy)}.btn.wa{background:#25D366;color:#06301A}
+.btn[disabled]{opacity:.35;cursor:default}
+.done{display:none;flex-direction:column;gap:14px;align-items:center;text-align:center}
+.done.on{display:flex}
+.badge{width:120px;height:120px;border-radius:60px;background:var(--yel);color:var(--navy);display:flex;align-items:center;justify-content:center;font:800 44px Montserrat,sans-serif;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.recap{width:100%;background:var(--card);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.recap div{display:flex;gap:10px;font-size:15px}.recap div b{color:var(--yel);font-family:'Courier Prime',monospace}
+.cta{width:100%;border:2px solid var(--yel);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.conf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.conf i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall 2.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 </style>
 </head>
 <body>
 <main class="app">
  <header>
-  <svg viewBox="0 0 300 300" width="84" height="84" role="img" aria-label="Spot the Diagnosis logo">
+  <svg viewBox="0 0 300 300" width="76" height="76" role="img" aria-label="Spot the Diagnosis logo">
 <defs><radialGradient id="rga" cx="42%" cy="50%" r="62%"><stop offset="0" stop-color="#F39A5A"></stop><stop offset="0.65" stop-color="#E8743B"></stop><stop offset="1" stop-color="#B4441C"></stop></radialGradient>
 <clipPath id="cla"><circle cx="130" cy="130" r="98"></circle></clipPath></defs>
 <path d="M196 196 L266 266" stroke="#FFF4E6" stroke-width="30" stroke-linecap="round" fill="none"></path>
@@ -77,82 +95,82 @@ td:first-child{color:var(--yel);font-weight:700;width:42%}
 <path d="M92 98 V110"></path><path d="M92 146 V158"></path><path d="M62 128 H74"></path><path d="M110 128 H122"></path></g>
 <circle cx="130" cy="130" r="98" fill="none" stroke="#FFF4E6" stroke-width="14"></circle>
 </svg>
-  <span class="mono kick">FREE GUIDE · EXAM &amp; OSCE READY</span>
-  <h1>How to read a fundus photo in <span>5 steps</span></h1>
-  <p>Fundus photos come up in exams and OSCE stations. Use the same order every time and you'll never freeze in front of one again.</p>
+  <span class="mono kick">CASE #014 · FREE INTERACTIVE GUIDE</span>
+  <h1>Read a fundus photo in <span>5 steps</span></h1>
+  <p>Tap a number, zoom in, learn the step, then answer one quick question.</p>
  </header>
-
- <section aria-labelledby="h-map">
-  <h2 id="h-map" style="text-align:center;margin-bottom:6px">Tap the numbers</h2>
-  <p class="hint">Each number is one step. Tap to jump to it.</p>
-  <div class="stage" id="stage"><svg viewBox="0 0 1000 1000" id="fundus" role="img" aria-label="Reference fundus photograph"><defs><radialGradient id="ga" cx="48%" cy="50%" r="55%"><stop offset="0" stop-color="#F29B5C"/><stop offset="0.6" stop-color="#E06B33"/><stop offset="0.92" stop-color="#9C3A16"/><stop offset="1" stop-color="#3a1408"/></radialGradient>
+ <div class="bar"><div class="prog" id="prog" aria-label="Steps completed"><i></i><i></i><i></i><i></i><i></i></div><button class="snd" id="snd" type="button" aria-pressed="true">🔊 Sound on</button></div>
+ <div class="lens" id="lens"><div class="zoom" id="zoom"><svg viewBox="0 0 1000 1000" id="fundus" role="img" aria-label="Reference fundus photograph"><defs><radialGradient id="ga" cx="48%" cy="50%" r="55%"><stop offset="0" stop-color="#F29B5C"/><stop offset="0.6" stop-color="#E06B33"/><stop offset="0.92" stop-color="#9C3A16"/><stop offset="1" stop-color="#3a1408"/></radialGradient>
 <filter id="ba" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5"/></filter><filter id="sa" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2"/></filter>
 <clipPath id="ca"><circle cx="500" cy="500" r="470"/></clipPath><radialGradient id="ma" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7a2410" stop-opacity="0.7"/><stop offset="1" stop-color="#7a2410" stop-opacity="0"/></radialGradient></defs>
 <rect width="1000" height="1000" fill="#000"/><g clip-path="url(#ca)"><circle cx="500" cy="500" r="470" fill="url(#ga)"/><circle cx="370" cy="510" r="70" fill="url(#ma)"/><path d="M520 470 C440 290 260 230 60 300" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 455 C490 250 360 150 160 90" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M520 530 C440 720 260 780 60 720" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 545 C490 760 360 860 160 930" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M570 480 C660 410 760 380 900 350" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M570 520 C660 600 760 640 900 690" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M600 500 C720 500 820 510 940 500" stroke="#A4161A" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M330 300 C320 380 280 410 230 450" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M330 720 C320 640 280 610 230 570" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 250 C390 200 380 150 400 90" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 760 C390 810 380 860 400 930" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M200 290 C180 340 150 360 110 380" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M200 730 C180 680 150 660 110 640" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 420 C730 330 760 280 800 220" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 590 C730 680 760 740 800 800" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/>
-<circle cx="560" cy="500" r="48" fill="#F6C453"/><circle cx="568" cy="500" r="20" fill="#FFF4E6" opacity="0.88"/></g><g id="spots"></g></svg></div>
+<circle cx="560" cy="500" r="48" fill="#F6C453"/><circle cx="568" cy="500" r="20" fill="#FFF4E6" opacity="0.88"/></g></svg></div><div class="ring"></div></div>
+ <p class="hint" id="hint">Start with number 1.</p>
+ <section class="sheet" id="sheet" aria-live="polite"></section>
+ <section class="done" id="done">
+  <div class="badge">5/5</div>
+  <h2>You just read a whole fundus!</h2>
+  <p>Use the same order with every photo you see:</p>
+  <div class="recap"><div><b>1</b>Which eye is it?</div><div><b>2</b>Disc: colour, contour, cup</div><div><b>3</b>Vessels: calibre, crossings, new vessels</div><div><b>4</b>Macula: anything near the fovea?</div><div><b>5</b>Background: red lesions, then yellow/white</div></div>
+  <div class="cta">
+   <span class="mono kick">CASE #014 · FUNDUS PHOTOGRAPHY WORKSHOP</span>
+   <h2>Ready for real cases?</h2>
+   <p>Spot the diagnosis with <b style="color:var(--cr)">Dr. Fadwa AlAdel</b> on <b style="color:var(--cr)">14 December 2026</b>. Certificate included.</p>
+   <a class="btn y" id="reg" href="#register">Register for the workshop</a>
+   <a class="btn wa" id="wa" href="#">Send this to your group</a>
+   <button class="btn" id="again" type="button" style="border:2px solid #3A4A60">Start again</button>
+  </div>
  </section>
-
- <section class="steps" aria-label="The five steps">
-  <article class="step" id="s1"><span class="num">STEP 1</span><h3>Orient yourself</h3>
-   <ul><li>Find the optic disc first: the bright yellow-orange circle.</li><li>The disc sits on the <b>nasal</b> side, and the macula is about <b>2 disc diameters temporal</b> to it.</li><li>So in a standard photo, a disc on the <b>right</b> usually means a <b>right eye</b>.</li></ul>
-   <div class="tip">Say it out loud in the OSCE: "This is a fundus photograph of the right eye."</div></article>
-  <article class="step" id="s2"><span class="num">STEP 2</span><h3>Optic disc: the 3 Cs</h3>
-   <ul><li><b>Colour:</b> healthy discs are pink-orange. Pale = think atrophy.</li><li><b>Contour:</b> margins should be sharp. Blurred or swollen = think disc swelling (e.g. papilledema).</li><li><b>Cup:</b> estimate the cup-to-disc ratio. A large or asymmetric cup = think glaucoma.</li></ul>
-   <div class="tip">Most normal discs have a cup-to-disc ratio below 0.5.</div></article>
-  <article class="step" id="s3"><span class="num">STEP 3</span><h3>Vessels</h3>
-   <ul><li>Arteries are thinner and lighter; veins are wider and darker.</li><li>Look at the crossings: is the vein being pinched (AV nicking)?</li><li>Look for abnormal new vessels, especially on or near the disc.</li></ul>
-   <div class="tip">Follow the vessels outward from the disc, one arcade at a time.</div></article>
-  <article class="step" id="s4"><span class="num">STEP 4</span><h3>Macula</h3>
-   <ul><li>The darker area temporal to the disc. The fovea is its center.</li><li>Look for drusen, exudates, haemorrhages or a cherry-red spot.</li><li>Changes here matter most for central vision.</li></ul>
-   <div class="tip">Never skip the macula. Small findings here are easy to miss.</div></article>
-  <article class="step" id="s5"><span class="num">STEP 5</span><h3>Background &amp; periphery</h3>
-   <ul><li><b>Red lesions:</b> dots, blots, flame-shaped haemorrhages, microaneurysms.</li><li><b>Yellow/white lesions:</b> hard exudates, cotton wool spots, drusen.</li><li>Check all four quadrants, then the far edges.</li></ul>
-   <div class="tip">Describe what you see first (colour, shape, location), then name it.</div></article>
- </section>
-
- <section class="check" aria-labelledby="h-check">
-  <h2 id="h-check">Your 30-second checklist</h2>
-  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-  <label><input type="checkbox">Which eye is it?</label>
-  <label><input type="checkbox">Disc: colour, contour, cup</label>
-  <label><input type="checkbox">Vessels: calibre, crossings, new vessels</label>
-  <label><input type="checkbox">Macula: anything at or near the fovea?</label>
-  <label><input type="checkbox">Background: red lesions, then yellow/white lesions</label>
-  <label><input type="checkbox">Summarise: "The main finding is… suggestive of…"</label>
- </section>
-
- <section aria-labelledby="h-num">
-  <h2 id="h-num" style="margin-bottom:8px">Quick numbers</h2>
-  <table>
-   <tr><td>Normal cup-to-disc ratio</td><td>Usually below 0.5</td></tr>
-   <tr><td>Artery : vein width</td><td>About 2 : 3</td></tr>
-   <tr><td>Macula position</td><td>About 2 disc diameters temporal to the disc</td></tr>
-  </table>
- </section>
-
- <section class="cta" aria-labelledby="h-cta">
-  <span class="mono kick">CASE #014 · FUNDUS PHOTOGRAPHY WORKSHOP</span>
-  <h2 id="h-cta">Now practise on real cases</h2>
-  <p>Spot the diagnosis with <b style="color:var(--cr)">Dr. Fadwa AlAdel</b> on <b style="color:var(--cr)">14 December 2026</b>. Certificate included.</p>
-  <a class="btn" id="reg" href="#register">Register for the workshop</a>
-  <a class="btn wa" id="wa" href="#">Send this guide to your group</a>
- </section>
- <p class="note">A quick study aid, not a substitute for your course material.</p>
 </main>
+<div class="conf" id="conf" aria-hidden="true"></div>
 <script>
 const REG_LINK = "";
+const STEPS = [{"n": 1, "x": 500, "y": 110, "zx": 50, "zy": 45, "z": 1.15, "title": "Orient yourself", "pts": ["Find the optic disc first: the bright yellow-orange circle.", "The disc sits on the <b>nasal</b> side. The macula is about <b>2 disc diameters temporal</b> to it.", "So in a standard photo, a disc on the <b>right</b> usually means a <b>right eye</b>."], "q": "Look at the photo. Which eye is this?", "opts": ["Right eye", "Left eye"], "a": 0, "ok": "Yes! The disc is on the right side, so it's a right eye.", "no": "Look again: the disc is on the right side of the photo."}, {"n": 2, "x": 560, "y": 500, "zx": 56, "zy": 50, "z": 2.4, "title": "Optic disc: the 3 Cs", "pts": ["<b>Colour:</b> healthy discs are pink-orange. Pale = think atrophy.", "<b>Contour:</b> margins should be sharp. Blurred or swollen = think disc swelling.", "<b>Cup:</b> the pale centre. A large or asymmetric cup = think glaucoma. Most normal discs have a cup-to-disc ratio below 0.5."], "q": "Colour pink-orange, edges sharp, small cup. Healthy disc?", "opts": ["Looks healthy", "Looks abnormal"], "a": 0, "ok": "Correct. All 3 Cs look normal here.", "no": "Check the 3 Cs again: good colour, sharp edges, small cup."}, {"n": 3, "x": 420, "y": 240, "zx": 42, "zy": 26, "z": 2.2, "title": "Vessels", "pts": ["Arteries are thinner and lighter. Veins are wider and darker.", "Look where they cross: is the vein being pinched (AV nicking)?", "Watch for abnormal new vessels, especially on or near the disc."], "q": "Which one is usually the artery?", "opts": ["Thinner and lighter", "Wider and darker"], "a": 0, "ok": "Exactly. Arteries are the thinner, lighter ones.", "no": "Not quite. The wider, darker vessel is usually the vein."}, {"n": 4, "x": 360, "y": 520, "zx": 37, "zy": 51, "z": 2.3, "title": "Macula", "pts": ["The darker area beside the disc. The fovea is its centre.", "Look for drusen, exudates, haemorrhages or a cherry-red spot.", "Changes here matter most for central vision."], "q": "Where is the macula compared to the disc?", "opts": ["Temporal to the disc", "Nasal to the disc"], "a": 0, "ok": "Right. About 2 disc diameters temporal to the disc.", "no": "Other side! The macula is temporal to the disc."}, {"n": 5, "x": 210, "y": 760, "zx": 24, "zy": 74, "z": 2.0, "title": "Background & periphery", "pts": ["<b>Red lesions:</b> dots, blots, flame-shaped haemorrhages, microaneurysms.", "<b>Yellow/white lesions:</b> hard exudates, cotton wool spots, drusen.", "Check all four quadrants, then the far edges. Describe first (colour, shape, location), then name it."], "q": "Which one is a RED lesion?", "opts": ["Flame-shaped haemorrhage", "Drusen"], "a": 0, "ok": "Yes. Haemorrhages are red. Drusen are yellow.", "no": "Drusen are yellow. The flame-shaped haemorrhage is the red one."}];
 (function(){
 const $=id=>document.getElementById(id);
 if(REG_LINK){$('reg').href=REG_LINK;$('reg').target='_blank';$('reg').rel='noopener';}else $('reg').addEventListener('click',e=>{e.preventDefault();$('reg').textContent='Registration link coming soon';});
 const link=(/^https?:$/.test(location.protocol)&&!/claude|anthropic/.test(location.hostname))?location.origin+location.pathname:'';
-$('wa').href='https://wa.me/?text='+encodeURIComponent('How to read a fundus photo in 5 steps 👁️ Super useful for exams and OSCEs:'+(link?'\n'+link:''));
-// hotspots in svg coords (fundus viewBox 1000): disc 560,500 ; vessel arcade 380,250 ; macula 370,510 ; periphery 200,760 ; orient (top) 500,90
-const H=[[1,500,110],[2,560,500],[3,420,240],[4,360,520],[5,210,760]];
-const st=$('stage');
-H.forEach(([n,x,y])=>{const b=document.createElement('button');b.className='hot';b.type='button';b.textContent=n;b.style.left=(x/10)+'%';b.style.top=(y/10)+'%';b.setAttribute('aria-label','Step '+n);
- b.addEventListener('click',()=>{b.classList.add('seen');$('s'+n).scrollIntoView({behavior:'smooth',block:'start'});});st.appendChild(b);});
-const boxes=[...document.querySelectorAll('.check input')];
-boxes.forEach(c=>c.addEventListener('change',()=>{$('bar').style.width=(boxes.filter(x=>x.checked).length/boxes.length*100)+'%';}));
+$('wa').href='https://wa.me/?text='+encodeURIComponent('I just learned to read a fundus photo in 5 steps 👁️ Try it, it takes 2 minutes:'+(link?'\n'+link:''));
+/* ---- sound (Web Audio, no files) ---- */
+let ctx=null,sound=true;
+function ac(){if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(ctx&&ctx.state==='suspended')ctx.resume();return ctx;}
+function tone(f,t0,dur,type,vol){const c=ac();if(!c||!sound)return;const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.value=f;const s=c.currentTime+t0;
+ g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(vol||.18,s+.015);g.gain.exponentialRampToValueAtTime(.0001,s+dur);o.connect(g).connect(c.destination);o.start(s);o.stop(s+dur+.05);}
+function sweep(f1,f2,dur,vol){const c=ac();if(!c||!sound)return;const o=c.createOscillator(),g=c.createGain();const s=c.currentTime;o.type='sine';o.frequency.setValueAtTime(f1,s);o.frequency.exponentialRampToValueAtTime(f2,s+dur);
+ g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(vol||.12,s+.05);g.gain.exponentialRampToValueAtTime(.0001,s+dur);o.connect(g).connect(c.destination);o.start(s);o.stop(s+dur+.05);}
+const SFX={
+ tap:()=>tone(660,0,.12,'triangle',.16),
+ zoom:()=>sweep(220,880,.55,.08),
+ ok:()=>{tone(784,0,.25,'sine',.16);tone(1047,.1,.35,'sine',.16);},
+ no:()=>{tone(196,0,.18,'square',.06);tone(165,.12,.25,'square',.06);},
+ back:()=>sweep(700,260,.4,.07),
+ win:()=>{[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.11,.5,'triangle',.14));}
+};
+$('snd').addEventListener('click',()=>{sound=!sound;$('snd').textContent=sound?'🔊 Sound on':'🔇 Sound off';$('snd').setAttribute('aria-pressed',sound);if(sound){ac();SFX.tap();}});
+/* ---- hotspots ---- */
+const done=new Set();let cur=null;
+const zoom=$('zoom'),lens=$('lens');
+STEPS.forEach(s=>{const b=document.createElement('button');b.className='hot';b.type='button';b.id='h'+s.n;b.textContent=s.n;b.style.left=(s.x/10)+'%';b.style.top=(s.y/10)+'%';b.setAttribute('aria-label','Step '+s.n+': '+s.title);b.addEventListener('click',()=>openStep(s));zoom.appendChild(b);});
+function prog(){[...$('prog').children].forEach((i,k)=>i.classList.toggle('on',done.has(k+1)));}
+function openStep(s){cur=s;SFX.tap();setTimeout(SFX.zoom,80);
+ zoom.style.transformOrigin=s.zx+'% '+s.zy+'%';zoom.style.transform='scale('+s.z+')';lens.classList.add('zoomed');
+ $('hint').textContent='Step '+s.n+' of 5';
+ const sh=$('sheet');sh.classList.add('on');
+ sh.innerHTML=`<span class="num">STEP ${s.n} OF 5</span><h3>${s.title}</h3><div class="facts">${s.pts.map((p,i)=>`<div class="fact" style="animation-delay:${.25+i*.25}s"><span>${p}</span></div>`).join('')}</div>
+  <div class="quiz"><div class="q">${s.q}</div><div class="opts">${s.opts.map((o,i)=>`<button class="opt" type="button" data-i="${i}">${o}</button>`).join('')}</div><div class="fb" id="fb"></div></div>
+  <button class="btn" id="next" type="button" disabled>${done.size>=4&&!done.has(s.n)?'Finish':'Back to the photo'}</button>`;
+ sh.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(i===s.a){SFX.ok();sh.querySelectorAll('.opt').forEach(x=>x.disabled=true);b.classList.add('ok');$('fb').textContent=s.ok;$('fb').style.color='#2E7D4F';done.add(s.n);$('h'+s.n).classList.add('done');prog();$('next').disabled=false;$('next').focus();}
+  else{SFX.no();b.classList.remove('no');void b.offsetWidth;b.classList.add('no');$('fb').textContent=s.no;$('fb').style.color='#A4161A';}}));
+ $('next').addEventListener('click',closeStep);
+ setTimeout(()=>sh.scrollIntoView({behavior:'smooth',block:'nearest'}),350);}
+function closeStep(){SFX.back();zoom.style.transform='scale(1)';lens.classList.remove('zoomed');$('sheet').classList.remove('on');
+ if(done.size===5){setTimeout(finish,500);return;}
+ const nxt=STEPS.find(s=>!done.has(s.n));$('hint').textContent=nxt?'Nice! Now tap number '+nxt.n+'.':'';
+ lens.scrollIntoView({behavior:'smooth',block:'center'});}
+function finish(){SFX.win();$('done').classList.add('on');$('hint').textContent='All 5 steps done!';confetti();setTimeout(()=>$('done').scrollIntoView({behavior:'smooth',block:'start'}),200);}
+function confetti(){const c=$('conf');const cols=['#F6C453','#E8743B','#FFF4E6','#A4161A','#7FB7BE'];for(let i=0;i<60;i++){const e=document.createElement('i');e.style.left=Math.random()*100+'%';e.style.background=cols[i%5];e.style.animationDelay=(Math.random()*.6)+'s';e.style.animationDuration=(1.8+Math.random()*1.2)+'s';c.appendChild(e);}setTimeout(()=>c.innerHTML='',3500);}
+$('again').addEventListener('click',()=>{done.clear();prog();document.querySelectorAll('.hot').forEach(h=>h.classList.remove('done'));$('done').classList.remove('on');$('hint').textContent='Start with number 1.';window.scrollTo({top:0,behavior:'smooth'});});
 })();
 </script>
 </body>
