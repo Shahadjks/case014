@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to Read a Fundus Photo in 5 Steps</title>
+<meta property="og:title" content="How to Read a Fundus Photo in 5 Steps">
+<meta property="og:description" content="A quick, interactive guide for exams and OSCEs.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+:root{--navy:#0F1B2D;--or:#E8743B;--red:#A4161A;--yel:#F6C453;--cr:#FFF4E6;--mut:#C9C2B8;--card:#1B2A40}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--navy);color:var(--cr);font-family:Montserrat,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.app{max-width:520px;margin:0 auto;padding:22px 18px 40px;display:flex;flex-direction:column;gap:22px}
+.mono{font-family:'Courier Prime',monospace;letter-spacing:.14em}
+header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+h1{margin:0;font-weight:800;font-size:34px;line-height:1.02;letter-spacing:-.5px}
+h1 span{color:var(--or)}
+h2{margin:0;font-size:22px;font-weight:800}
+p{margin:0;font-size:16px;line-height:1.55;color:var(--mut)}
+.kick{color:var(--yel);font-size:12px}
+.stage{position:relative;width:100%;max-width:420px;margin:0 auto}
+.stage svg#fundus{width:100%;height:auto;display:block;border-radius:50%}
+.hot{position:absolute;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:20px;border:3px solid var(--yel);background:rgba(15,27,45,.85);color:var(--yel);font:800 17px Montserrat,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:ping 1.8s infinite}
+.hot.seen{animation:none;background:var(--yel);color:var(--navy)}
+.hot:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(246,196,83,.6)}100%{box-shadow:0 0 0 14px rgba(246,196,83,0)}}
+.hint{text-align:center;font-size:14px}
+.step{background:var(--cr);color:var(--navy);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.step .num{font:700 12px 'Courier Prime',monospace;letter-spacing:.16em;color:var(--red)}
+.step h3{margin:0;font-size:21px}
+.step ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.5}
+.step .tip{background:#f3e7d4;border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5}
+.steps{display:flex;flex-direction:column;gap:14px}
+.check{background:var(--card);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.check label{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.45;cursor:pointer;padding:4px 0}
+.check input{width:22px;height:22px;accent-color:var(--yel);flex:0 0 22px;margin-top:1px}
+.check .bar{height:8px;border-radius:4px;background:#0f1b2d;overflow:hidden}
+.check .bar i{display:block;height:100%;width:0;background:var(--yel);transition:width .3s}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:10px 8px;border-bottom:1px solid #2a3a52;vertical-align:top}
+td:first-child{color:var(--yel);font-weight:700;width:42%}
+.cta{background:linear-gradient(0deg,#16243a,#16243a);border:2px solid var(--yel);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.btn{appearance:none;border:0;border-radius:999px;background:var(--yel);color:var(--navy);font:800 17px Montserrat,sans-serif;padding:15px 24px;min-height:52px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:100%;max-width:360px}
+.btn.wa{background:#25D366;color:#06301A}
+.btn:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+.note{font-size:12px;color:#8a97ab;text-align:center;line-height:1.5}
+</style>
+</head>
+<body>
+<main class="app">
+ <header>
+  <svg viewBox="0 0 300 300" width="84" height="84" role="img" aria-label="Spot the Diagnosis logo">
+<defs><radialGradient id="rga" cx="42%" cy="50%" r="62%"><stop offset="0" stop-color="#F39A5A"></stop><stop offset="0.65" stop-color="#E8743B"></stop><stop offset="1" stop-color="#B4441C"></stop></radialGradient>
+<clipPath id="cla"><circle cx="130" cy="130" r="98"></circle></clipPath></defs>
+<path d="M196 196 L266 266" stroke="#FFF4E6" stroke-width="30" stroke-linecap="round" fill="none"></path>
+<path d="M200 200 L222 222" stroke="#F6C453" stroke-width="36" fill="none"></path>
+<circle cx="130" cy="130" r="98" fill="url(#rga)"></circle>
+<g clip-path="url(#cla)" fill="none" stroke="#A4161A" stroke-linecap="round">
+<path d="M168 114 C150 70 100 60 30 82" stroke-width="5.5"></path>
+<path d="M170 110 C160 58 122 38 66 26" stroke-width="3.5"></path>
+<path d="M168 136 C150 184 100 196 30 178" stroke-width="5.5"></path>
+<path d="M170 140 C160 196 122 218 66 232" stroke-width="3.5"></path>
+<path d="M186 118 C206 100 222 94 244 88" stroke-width="3"></path>
+<path d="M186 134 C206 152 222 160 244 170" stroke-width="3"></path>
+<path d="M118 72 C114 94 102 100 88 112" stroke-width="2"></path>
+<path d="M118 188 C112 166 100 160 86 148" stroke-width="2"></path>
+<path d="M150 86 C142 70 140 56 146 40" stroke-width="2"></path>
+<path d="M150 176 C142 192 140 206 146 222" stroke-width="2"></path>
+</g>
+<circle cx="92" cy="128" r="13" fill="#8E2A12" opacity="0.55"></circle>
+<circle cx="172" cy="124" r="19" fill="#F6C453"></circle>
+<circle cx="174" cy="124" r="8" fill="#FFF4E6" opacity="0.85"></circle>
+<g stroke="#FFF4E6" stroke-width="3.5" stroke-linecap="round" fill="none">
+<circle cx="92" cy="128" r="23"></circle>
+<path d="M92 98 V110"></path><path d="M92 146 V158"></path><path d="M62 128 H74"></path><path d="M110 128 H122"></path></g>
+<circle cx="130" cy="130" r="98" fill="none" stroke="#FFF4E6" stroke-width="14"></circle>
+</svg>
+  <span class="mono kick">FREE GUIDE · EXAM &amp; OSCE READY</span>
+  <h1>How to read a fundus photo in <span>5 steps</span></h1>
+  <p>Fundus photos come up in exams and OSCE stations. Use the same order every time and you'll never freeze in front of one again.</p>
+ </header>
+
+ <section aria-labelledby="h-map">
+  <h2 id="h-map" style="text-align:center;margin-bottom:6px">Tap the numbers</h2>
+  <p class="hint">Each number is one step. Tap to jump to it.</p>
+  <div class="stage" id="stage"><svg viewBox="0 0 1000 1000" id="fundus" role="img" aria-label="Reference fundus photograph"><defs><radialGradient id="ga" cx="48%" cy="50%" r="55%"><stop offset="0" stop-color="#F29B5C"/><stop offset="0.6" stop-color="#E06B33"/><stop offset="0.92" stop-color="#9C3A16"/><stop offset="1" stop-color="#3a1408"/></radialGradient>
+<filter id="ba" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5"/></filter><filter id="sa" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2"/></filter>
+<clipPath id="ca"><circle cx="500" cy="500" r="470"/></clipPath><radialGradient id="ma" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7a2410" stop-opacity="0.7"/><stop offset="1" stop-color="#7a2410" stop-opacity="0"/></radialGradient></defs>
+<rect width="1000" height="1000" fill="#000"/><g clip-path="url(#ca)"><circle cx="500" cy="500" r="470" fill="url(#ga)"/><circle cx="370" cy="510" r="70" fill="url(#ma)"/><path d="M520 470 C440 290 260 230 60 300" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 455 C490 250 360 150 160 90" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M520 530 C440 720 260 780 60 720" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 545 C490 760 360 860 160 930" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M570 480 C660 410 760 380 900 350" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M570 520 C660 600 760 640 900 690" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M600 500 C720 500 820 510 940 500" stroke="#A4161A" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M330 300 C320 380 280 410 230 450" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M330 720 C320 640 280 610 230 570" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 250 C390 200 380 150 400 90" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 760 C390 810 380 860 400 930" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M200 290 C180 340 150 360 110 380" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M200 730 C180 680 150 660 110 640" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 420 C730 330 760 280 800 220" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 590 C730 680 760 740 800 800" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/>
+<circle cx="560" cy="500" r="48" fill="#F6C453"/><circle cx="568" cy="500" r="20" fill="#FFF4E6" opacity="0.88"/></g><g id="spots"></g></svg></div>
+ </section>
+
+ <section class="steps" aria-label="The five steps">
+  <article class="step" id="s1"><span class="num">STEP 1</span><h3>Orient yourself</h3>
+   <ul><li>Find the optic disc first: the bright yellow-orange circle.</li><li>The disc sits on the <b>nasal</b> side, and the macula is about <b>2 disc diameters temporal</b> to it.</li><li>So in a standard photo, a disc on the <b>right</b> usually means a <b>right eye</b>.</li></ul>
+   <div class="tip">Say it out loud in the OSCE: "This is a fundus photograph of the right eye."</div></article>
+  <article class="step" id="s2"><span class="num">STEP 2</span><h3>Optic disc: the 3 Cs</h3>
+   <ul><li><b>Colour:</b> healthy discs are pink-orange. Pale = think atrophy.</li><li><b>Contour:</b> margins should be sharp. Blurred or swollen = think disc swelling (e.g. papilledema).</li><li><b>Cup:</b> estimate the cup-to-disc ratio. A large or asymmetric cup = think glaucoma.</li></ul>
+   <div class="tip">Most normal discs have a cup-to-disc ratio below 0.5.</div></article>
+  <article class="step" id="s3"><span class="num">STEP 3</span><h3>Vessels</h3>
+   <ul><li>Arteries are thinner and lighter; veins are wider and darker.</li><li>Look at the crossings: is the vein being pinched (AV nicking)?</li><li>Look for abnormal new vessels, especially on or near the disc.</li></ul>
+   <div class="tip">Follow the vessels outward from the disc, one arcade at a time.</div></article>
+  <article class="step" id="s4"><span class="num">STEP 4</span><h3>Macula</h3>
+   <ul><li>The darker area temporal to the disc. The fovea is its center.</li><li>Look for drusen, exudates, haemorrhages or a cherry-red spot.</li><li>Changes here matter most for central vision.</li></ul>
+   <div class="tip">Never skip the macula. Small findings here are easy to miss.</div></article>
+  <article class="step" id="s5"><span class="num">STEP 5</span><h3>Background &amp; periphery</h3>
+   <ul><li><b>Red lesions:</b> dots, blots, flame-shaped haemorrhages, microaneurysms.</li><li><b>Yellow/white lesions:</b> hard exudates, cotton wool spots, drusen.</li><li>Check all four quadrants, then the far edges.</li></ul>
+   <div class="tip">Describe what you see first (colour, shape, location), then name it.</div></article>
+ </section>
+
+ <section class="check" aria-labelledby="h-check">
+  <h2 id="h-check">Your 30-second checklist</h2>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+  <label><input type="checkbox">Which eye is it?</label>
+  <label><input type="checkbox">Disc: colour, contour, cup</label>
+  <label><input type="checkbox">Vessels: calibre, crossings, new vessels</label>
+  <label><input type="checkbox">Macula: anything at or near the fovea?</label>
+  <label><input type="checkbox">Background: red lesions, then yellow/white lesions</label>
+  <label><input type="checkbox">Summarise: "The main finding is… suggestive of…"</label>
+ </section>
+
+ <section aria-labelledby="h-num">
+  <h2 id="h-num" style="margin-bottom:8px">Quick numbers</h2>
+  <table>
+   <tr><td>Normal cup-to-disc ratio</td><td>Usually below 0.5</td></tr>
+   <tr><td>Artery : vein width</td><td>About 2 : 3</td></tr>
+   <tr><td>Macula position</td><td>About 2 disc diameters temporal to the disc</td></tr>
+  </table>
+ </section>
+
+ <section class="cta" aria-labelledby="h-cta">
+  <span class="mono kick">CASE #014 · FUNDUS PHOTOGRAPHY WORKSHOP</span>
+  <h2 id="h-cta">Now practise on real cases</h2>
+  <p>Spot the diagnosis with <b style="color:var(--cr)">Dr. Fadwa AlAdel</b> on <b style="color:var(--cr)">14 December 2026</b>. Certificate included.</p>
+  <a class="btn" id="reg" href="#register">Register for the workshop</a>
+  <a class="btn wa" id="wa" href="#">Send this guide to your group</a>
+ </section>
+ <p class="note">A quick study aid, not a substitute for your course material.</p>
+</main>
+<script>
+const REG_LINK = "";
+(function(){
+const $=id=>document.getElementById(id);
+if(REG_LINK){$('reg').href=REG_LINK;$('reg').target='_blank';$('reg').rel='noopener';}else $('reg').addEventListener('click',e=>{e.preventDefault();$('reg').textContent='Registration link coming soon';});
+const link=(/^https?:$/.test(location.protocol)&&!/claude|anthropic/.test(location.hostname))?location.origin+location.pathname:'';
+$('wa').href='https://wa.me/?text='+encodeURIComponent('How to read a fundus photo in 5 steps 👁️ Super useful for exams and OSCEs:'+(link?'\n'+link:''));
+// hotspots in svg coords (fundus viewBox 1000): disc 560,500 ; vessel arcade 380,250 ; macula 370,510 ; periphery 200,760 ; orient (top) 500,90
+const H=[[1,500,110],[2,560,500],[3,420,240],[4,360,520],[5,210,760]];
+const st=$('stage');
+H.forEach(([n,x,y])=>{const b=document.createElement('button');b.className='hot';b.type='button';b.textContent=n;b.style.left=(x/10)+'%';b.style.top=(y/10)+'%';b.setAttribute('aria-label','Step '+n);
+ b.addEventListener('click',()=>{b.classList.add('seen');$('s'+n).scrollIntoView({behavior:'smooth',block:'start'});});st.appendChild(b);});
+const boxes=[...document.querySelectorAll('.check input')];
+boxes.forEach(c=>c.addEventListener('change',()=>{$('bar').style.width=(boxes.filter(x=>x.checked).length/boxes.length*100)+'%';}));
+})();
+</script>
+</body>
+</html>
