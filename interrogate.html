@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Case #014: The Interrogation Room</title>
+<meta property="og:title" content="Case #014: The Interrogation Room">
+<meta property="og:description" content="Four suspects. Four mugshots. Can you tell who is who?">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+:root{--navy:#0F1B2D;--or:#E8743B;--red:#A4161A;--yel:#F6C453;--cr:#FFF4E6;--mut:#C9C2B8;--card:#1B2A40}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--navy);color:var(--cr);font-family:Montserrat,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.app{max-width:480px;margin:0 auto;padding:18px 18px 32px}
+.mono{font-family:'Courier Prime',monospace;letter-spacing:.16em}
+.screen{display:none;flex-direction:column;align-items:center;text-align:center;gap:14px}.screen.on{display:flex}
+h1{font-weight:800;font-size:36px;line-height:1;margin:0;letter-spacing:-.5px}h1 .o{color:var(--or)}
+p{margin:0;font-size:16px;line-height:1.5;color:var(--mut)}
+.kick{color:var(--yel);font-size:13px}
+.btn{appearance:none;border:0;border-radius:999px;background:var(--yel);color:var(--navy);font:800 17px Montserrat,sans-serif;padding:15px 24px;min-height:50px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:100%;max-width:340px}
+.btn.wa{background:#25D366;color:#06301A}.btn.ghost{background:transparent;color:var(--cr);border:2px solid #3A4A60}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn:focus-visible,.sus:focus-visible,.opt:focus-visible,.q:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+.wall{width:100%;background:repeating-linear-gradient(#22324a 0 2px,transparent 2px 38px),#16243a;border-radius:18px;padding:16px 10px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative}
+.wall::before{content:"7ft  6ft  5ft";position:absolute;left:8px;top:6px;font:700 10px 'Courier Prime',monospace;color:#3d5170;white-space:pre}
+.sus{appearance:none;border:0;background:none;color:var(--cr);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0}
+.sil{width:100%;aspect-ratio:.62/1;position:relative}
+.sil svg{width:100%;height:100%}
+.sus .tag{font:700 10px 'Courier Prime',monospace;letter-spacing:.1em;background:var(--cr);color:var(--navy);padding:3px 4px;border-radius:3px;width:100%}
+.sus .st{font-size:10px;color:var(--mut);min-height:14px}
+.sus.done .st{color:var(--yel)}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(5,9,15,.75);display:none;align-items:flex-end;justify-content:center;padding:12px}
+.modal.on{display:flex}
+.sheet{width:100%;max-width:460px;max-height:90dvh;overflow:auto;background:#101a2a;border:1px solid #26354d;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.sheet>*{flex-shrink:0}
+.shead{display:flex;align-items:center;gap:12px;text-align:left}
+.avatar{width:52px;height:52px;border-radius:26px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy);flex:0 0 52px}
+.chat{display:flex;flex-direction:column;gap:8px;min-height:120px}
+.b{max-width:85%;padding:10px 13px;border-radius:16px;font-size:15px;line-height:1.45;text-align:left;animation:pop .2s ease-out}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:none;opacity:1}}
+.b.me{align-self:flex-end;background:var(--yel);color:var(--navy);border-bottom-right-radius:4px}
+.b.them{align-self:flex-start;background:var(--card);color:var(--cr);border-bottom-left-radius:4px}
+.typing{align-self:flex-start;background:var(--card);border-radius:16px;padding:12px 14px;display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:4px;background:var(--mut);animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{0%,100%{opacity:.3}50%{opacity:1}}
+.qs{display:flex;flex-direction:column;gap:8px}
+.q{appearance:none;border:2px solid #3A4A60;background:transparent;color:var(--cr);border-radius:14px;padding:11px 14px;font:600 15px Montserrat,sans-serif;text-align:left;cursor:pointer}
+.q[disabled]{opacity:.35}
+.mug{width:100%;max-width:300px;background:#e9e2d6;border-radius:10px;padding:12px 12px 10px;color:var(--navy);box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.mug svg{width:100%;height:auto;display:block;border-radius:6px}
+.mug .plate{margin-top:8px;background:var(--navy);color:var(--cr);font:700 13px 'Courier Prime',monospace;letter-spacing:.14em;padding:6px;border-radius:4px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:340px}
+.opt{appearance:none;border:0;border-radius:14px;background:var(--card);color:var(--cr);font:700 14px Montserrat,sans-serif;padding:14px 8px;min-height:56px;cursor:pointer}
+.opt.ok{background:#2E7D4F}.opt.no{background:var(--red)}
+.fb{min-height:46px;font-size:15px;color:var(--cr)}
+.card{width:100%;max-width:340px;background:var(--cr);color:var(--navy);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;text-align:left}
+.card .mono{font-size:12px;color:var(--red)}.card .big{font-weight:800;font-size:30px}
+.list{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px}
+.li{display:flex;justify-content:space-between;background:var(--card);border-radius:10px;padding:9px 12px;font-size:14px;text-align:left}
+.li span:last-child{font-family:'Courier Prime',monospace;font-weight:700;font-size:13px}
+.okc{color:var(--yel)}.noc{color:var(--or)}
+.small{font-size:13px;color:var(--mut)}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<main class="app">
+ <section class="screen on" id="intro" aria-labelledby="ti">
+  <svg viewBox="0 0 300 300" width="110" height="110" role="img" aria-label="Logo">
+<defs><radialGradient id="rga" cx="42%" cy="50%" r="62%"><stop offset="0" stop-color="#F39A5A"></stop><stop offset="0.65" stop-color="#E8743B"></stop><stop offset="1" stop-color="#B4441C"></stop></radialGradient>
+<clipPath id="cla"><circle cx="130" cy="130" r="98"></circle></clipPath></defs>
+<path d="M196 196 L266 266" stroke="#FFF4E6" stroke-width="30" stroke-linecap="round" fill="none"></path>
+<path d="M200 200 L222 222" stroke="#F6C453" stroke-width="36" fill="none"></path>
+<circle cx="130" cy="130" r="98" fill="url(#rga)"></circle>
+<g clip-path="url(#cla)" fill="none" stroke="#A4161A" stroke-linecap="round">
+<path d="M168 114 C150 70 100 60 30 82" stroke-width="5.5"></path>
+<path d="M170 110 C160 58 122 38 66 26" stroke-width="3.5"></path>
+<path d="M168 136 C150 184 100 196 30 178" stroke-width="5.5"></path>
+<path d="M170 140 C160 196 122 218 66 232" stroke-width="3.5"></path>
+<path d="M186 118 C206 100 222 94 244 88" stroke-width="3"></path>
+<path d="M186 134 C206 152 222 160 244 170" stroke-width="3"></path>
+<path d="M118 72 C114 94 102 100 88 112" stroke-width="2"></path>
+<path d="M118 188 C112 166 100 160 86 148" stroke-width="2"></path>
+<path d="M150 86 C142 70 140 56 146 40" stroke-width="2"></path>
+<path d="M150 176 C142 192 140 206 146 222" stroke-width="2"></path>
+</g>
+<circle cx="92" cy="128" r="13" fill="#8E2A12" opacity="0.55"></circle>
+<circle cx="172" cy="124" r="19" fill="#F6C453"></circle>
+<circle cx="174" cy="124" r="8" fill="#FFF4E6" opacity="0.85"></circle>
+<g stroke="#FFF4E6" stroke-width="3.5" stroke-linecap="round" fill="none">
+<circle cx="92" cy="128" r="23"></circle>
+<path d="M92 98 V110"></path><path d="M92 146 V158"></path><path d="M62 128 H74"></path><path d="M110 128 H122"></path></g>
+<circle cx="130" cy="130" r="98" fill="none" stroke="#FFF4E6" stroke-width="14"></circle>
+</svg>
+  <span class="mono kick">CASE #014 · INTERROGATION ROOM</span>
+  <h1 id="ti">FOUR SUSPECTS.<br><span class="o">ONE LINE-UP.</span></h1>
+  <p>Four findings were brought in for questioning. Interrogate them, then match each one to their mugshot.</p>
+  <button class="btn" id="start" type="button">Enter the interrogation room</button>
+  <span class="small">Fundus Photography: Spot the Diagnosis · 14 December 2026</span>
+ </section>
+
+ <section class="screen" id="lineup" aria-labelledby="tl">
+  <span class="mono kick">THE LINE-UP</span>
+  <h1 id="tl" style="font-size:28px">Who do you want<br>to question?</h1>
+  <div class="wall" id="wall"></div>
+  <p class="small" id="prog">Tap a suspect to start the interrogation.</p>
+  <button class="btn" id="tomug" type="button" disabled>Identify the mugshots</button>
+ </section>
+
+ <section class="screen" id="mugs" aria-labelledby="tm">
+  <span class="mono kick" id="mk">MUGSHOT 1 OF 4</span>
+  <h1 id="tm" style="font-size:26px">Who is this?</h1>
+  <div class="mug"><svg viewBox="0 0 300 300" id="mugsvg" role="img" aria-label="Mugshot of a fundus finding"></svg><div class="plate" id="plate">CASE #014 · SUSPECT ?</div></div>
+  <div class="opts" id="opts"></div>
+  <div class="fb" id="fb" aria-live="polite"></div>
+  <button class="btn" id="next" type="button" style="display:none">Next mugshot</button>
+ </section>
+
+ <section class="screen" id="end" aria-labelledby="te">
+  <span class="mono kick">CASE #014 · REPORT</span>
+  <h1 id="te">Case report</h1>
+  <div class="card"><span class="mono">DETECTIVE REPORT</span><span class="big" id="score">4 of 4</span><span style="font-size:14px" id="stime"></span></div>
+  <div class="list" id="list"></div>
+  <p id="emsg"></p>
+  <p style="color:var(--cr)">Meet the real suspects with <b>Dr. Fadwa AlAdel</b> on <b>14 December</b>.</p>
+  <a class="btn" id="reg" href="#register">Register for the workshop</a>
+  <a class="btn wa" id="wa" href="#">Challenge your WhatsApp group</a>
+  <button class="btn ghost" id="again" type="button">Play again</button>
+  <div class="row"><a class="btn ghost" href="index.html" style="width:auto;flex:1">The Chief's desk</a><a class="btn ghost" href="spot.html" style="width:auto;flex:1">Spot the Difference</a></div>
+ </section>
+</main>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="sname"><div class="sheet" id="sheet"></div></div>
+<script>
+const REG_LINK = "";
+const GAME_LINK = (/^https?:$/.test(location.protocol)&&!/claude|anthropic/.test(location.hostname))?location.origin+location.pathname:"";
+const S = [{"id": "micro", "name": "Microaneurysms", "code": "TINY", "col": "#E8743B", "lines": [["Describe yourself.", "Small. Round. Red. Like a dot someone forgot to erase."], ["Where were you last seen?", "Along the tiny capillaries. We usually come as a group."], ["Anything else we should know?", "We are often the first to show up. Early birds, you know."]]}, {"id": "roth", "name": "Roth spot", "code": "DOUGHNUT", "col": "#A4161A", "lines": [["Describe yourself.", "Red all around, pale in the middle. Yes, like a doughnut. Stop laughing."], ["Where were you last seen?", "In the retina. I travel light."], ["Anything else we should know?", "I'm a hemorrhage with a white center. I am NOT a cotton wool spot. We're not related."]]}, {"id": "neo", "name": "Neovascularization", "code": "THE NEW GUY", "col": "#7FB7BE", "lines": [["Describe yourself.", "Thin, wiggly, a bit messy. I'm still figuring myself out."], ["Where were you last seen?", "On the optic disc, or anywhere else nobody invited me."], ["Anything else we should know?", "I'm made of new vessels, and I'm fragile. Handle me with care. Seriously."]]}, {"id": "papill", "name": "Papilledema", "code": "PRESSURE", "col": "#F6C453", "lines": [["Describe yourself.", "Swollen. Blurry edges. It's been a stressful week."], ["Where were you last seen?", "At the optic disc. That's home. Usually in both eyes."], ["Anything else we should know?", "The pressure inside the head is really getting to me."]]}];
+const MUG = {"micro": "<defs><radialGradient id=\"gm\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fm\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hm\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gm)\"/><path d=\"M-10 90 C80 120 160 70 310 110\" stroke=\"#A4161A\" stroke-width=\"10\" fill=\"none\"/><path d=\"M40 300 C80 220 150 200 200 120\" stroke=\"#A4161A\" stroke-width=\"6\" fill=\"none\"/><circle cx=\"90\" cy=\"170\" r=\"6\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"130\" cy=\"150\" r=\"5\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"170\" cy=\"190\" r=\"7\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"210\" cy=\"160\" r=\"5\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"120\" cy=\"215\" r=\"6\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"190\" cy=\"230\" r=\"5\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"240\" cy=\"200\" r=\"6\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"150\" cy=\"250\" r=\"4\" fill=\"#8E0F12\" filter=\"url(#hm)\"/>", "roth": "<defs><radialGradient id=\"gr\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fr\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hr\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gr)\"/><path d=\"M-10 70 C90 100 170 60 310 90\" stroke=\"#A4161A\" stroke-width=\"10\" fill=\"none\"/><ellipse cx=\"150\" cy=\"175\" rx=\"62\" ry=\"50\" fill=\"#8E0F12\" filter=\"url(#hr)\"/><ellipse cx=\"150\" cy=\"175\" rx=\"20\" ry=\"16\" fill=\"#FFF4E6\" filter=\"url(#hr)\"/>", "neo": "<defs><radialGradient id=\"gn\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fn\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hn\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gn)\"/><circle cx=\"150\" cy=\"150\" r=\"70\" fill=\"#F6C453\"/><circle cx=\"160\" cy=\"150\" r=\"30\" fill=\"#FFF4E6\" opacity=\".85\"/><path d=\"M110 120 q20 -30 40 0 t40 0 t-20 30\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M100 160 q15 25 35 5 t35 15 t30 -20\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M130 110 q-10 30 20 40 t10 40\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M175 115 q25 15 5 40 t25 35\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M95 140 q30 -10 50 15 t55 -5\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M120 190 q20 -25 45 -5 t30 -20\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/>", "papill": "<defs><radialGradient id=\"gp\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fp\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hp\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gp)\"/><circle cx=\"150\" cy=\"150\" r=\"78\" fill=\"#F6C453\" filter=\"url(#fp)\"/><circle cx=\"150\" cy=\"150\" r=\"60\" fill=\"#F8D27A\" filter=\"url(#fp)\"/><path d=\"M150 150 C140 90 110 50 60 10\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><path d=\"M150 150 C140 210 110 250 60 290\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><path d=\"M150 150 C190 120 240 100 310 90\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><path d=\"M150 150 C190 180 240 200 310 220\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><circle cx=\"150\" cy=\"150\" r=\"70\" fill=\"#F6C453\" opacity=\".55\" filter=\"url(#fp)\"/>"};
+(function(){
+const $=id=>document.getElementById(id);
+if(REG_LINK){$('reg').href=REG_LINK;$('reg').target='_blank';$('reg').rel='noopener';}else $('reg').addEventListener('click',e=>{e.preventDefault();$('reg').textContent='Registration link coming soon';});
+let asked,order,idx,correct,t0,secs;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);}
+const heights=[.92,.84,1,.88];
+function sil(c,h){return `<svg viewBox="0 0 62 100" aria-hidden="true" preserveAspectRatio="xMidYMax meet"><g transform="translate(31 100) scale(${h}) translate(-31 -100)"><circle cx="31" cy="24" r="13" fill="#0a111c"/><path d="M8 100 Q8 44 31 44 Q54 44 54 100Z" fill="#0a111c"/><text x="31" y="29" text-anchor="middle" font-size="12" font-weight="800" fill="${c}" font-family="Montserrat">?</text></g></svg>`;}
+function wall(){$('wall').innerHTML=S.map((s,i)=>`<button class="sus ${asked[i].size===3?'done':''}" data-i="${i}" type="button" aria-label="Question ${s.name}"><div class="sil">${sil(s.col,heights[i])}</div><span class="tag">${s.code}</span><span class="st">${asked[i].size===3?'✓ questioned':asked[i].size?'in progress':''}</span></button>`).join('');
+ $('wall').querySelectorAll('.sus').forEach(b=>b.addEventListener('click',()=>interrogate(+b.dataset.i)));
+ const n=asked.filter(a=>a.size>0).length;$('tomug').disabled=n<4;$('prog').textContent=n<4?`Questioned ${n} of 4 suspects.`:'All suspects questioned. Time to identify them.';}
+function start(){asked=S.map(()=>new Set());correct=[];t0=performance.now();wall();show('lineup');}
+function interrogate(i){const s=S[i];
+ $('sheet').innerHTML=`<div class="shead"><div class="avatar" style="background:${s.col}">${s.code[0]}</div><div><div class="mono" style="font-size:11px;color:var(--yel)">SUSPECT · CODENAME "${s.code}"</div><div id="sname" style="font-weight:800;font-size:20px">${s.name}</div></div></div><div class="chat" id="chat"></div><div class="qs" id="qs"></div><button class="btn ghost" id="cl" type="button">Back to the line-up</button>`;
+ $('modal').classList.add('on');
+ const chat=$('chat');
+ [...asked[i]].forEach(k=>{chat.insertAdjacentHTML('beforeend',`<div class="b me">${s.lines[k][0]}</div><div class="b them">${s.lines[k][1]}</div>`);});
+ if(!asked[i].size)chat.insertAdjacentHTML('beforeend',`<div class="b them">...What do you want? I've got nothing to hide.</div>`);
+ const qs=$('qs');qs.innerHTML=s.lines.map((l,k)=>`<button class="q" data-k="${k}" type="button" ${asked[i].has(k)?'disabled':''}>${l[0]}</button>`).join('');
+ qs.querySelectorAll('.q').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;if(asked[i].has(k))return;asked[i].add(k);qs.querySelectorAll('.q').forEach(x=>x.disabled=true);
+  chat.insertAdjacentHTML('beforeend',`<div class="b me">${s.lines[k][0]}</div><div class="typing" id="ty"><i></i><i></i><i></i></div>`);chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});
+  setTimeout(()=>{$('ty').remove();chat.insertAdjacentHTML('beforeend',`<div class="b them">${s.lines[k][1]}</div>`);qs.querySelectorAll('.q').forEach((x,j)=>x.disabled=asked[i].has(j));chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});
+   if(asked[i].size===3){chat.insertAdjacentHTML('beforeend',`<div class="b them" style="opacity:.8">That's all I'm saying without a lawyer.</div>`);qs.style.display='none';chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});}},900);}));
+ $('cl').addEventListener('click',()=>{$('modal').classList.remove('on');wall();});$('cl').focus();}
+$('modal').addEventListener('click',e=>{if(e.target===$('modal')){$('modal').classList.remove('on');wall();}});
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function mugs(){order=shuffle([0,1,2,3]);idx=0;correct=[];show('mugs');mug();}
+function mug(){const s=S[order[idx]];$('mk').textContent=`MUGSHOT ${idx+1} OF 4`;$('mugsvg').innerHTML=MUG[s.id];$('plate').textContent=`CASE #014 · SUSPECT ${String(idx+1).padStart(2,'0')}`;
+ $('fb').textContent='';$('next').style.display='none';
+ $('opts').innerHTML=shuffle([0,1,2,3]).map(j=>`<button class="opt" data-j="${j}" type="button">${S[j].name}</button>`).join('');
+ $('opts').querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j,ok=j===order[idx];correct[order[idx]]=ok;
+  $('opts').querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.j===order[idx])x.classList.add('ok');});if(!ok)b.classList.add('no');
+  $('fb').textContent=ok?`Correct. "${S[order[idx]].lines[2][1]}"`:`Not quite. That was ${S[order[idx]].name}.`;
+  $('next').textContent=idx<3?'Next mugshot':'See the case report';$('next').style.display='inline-flex';$('next').focus();}));}
+$('next').addEventListener('click',()=>{idx++;if(idx<4)mug();else end();});
+function end(){secs=Math.round((performance.now()-t0)/1000);const n=correct.filter(Boolean).length;
+ $('score').textContent=n+' of 4';$('stime').textContent=`suspects identified in ${secs} seconds`;
+ $('te').innerHTML=n===4?'Case closed,<br>detective.':n>=2?'Almost there.':'They fooled you.';
+ $('emsg').textContent=n===4?'You identified every suspect. Now learn to catch them in real photos.':'Some suspects are good at hiding. The real line-up is waiting.';
+ $('list').innerHTML=S.map((s,i)=>`<div class="li"><span>${s.name}</span><span class="${correct[i]?'okc':'noc'}">${correct[i]?'IDENTIFIED':'MISSED'}</span></div>`).join('');
+ const msg=`I identified ${n} of 4 suspects in Case #014's Interrogation Room 🕵️‍♀️ Can you beat me?`+(GAME_LINK?`\n${GAME_LINK}`:'');$('wa').href='https://wa.me/?text='+encodeURIComponent(msg);show('end');}
+$('start').addEventListener('click',start);$('tomug').addEventListener('click',mugs);$('again').addEventListener('click',start);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('modal').classList.contains('on')){$('modal').classList.remove('on');wall();}});
+})();
+</script>
+</body>
+</html>
