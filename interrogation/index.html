@@ -64,9 +64,14 @@ p{margin:0;font-size:16px;line-height:1.5;color:var(--mut)}
 .okc{color:var(--yel)}.noc{color:var(--or)}
 .small{font-size:13px;color:var(--mut)}
 .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.sndbtn{position:fixed;right:12px;top:calc(env(safe-area-inset-top) + 10px);z-index:25;appearance:none;border:2px solid #3A4A60;background:rgba(15,27,45,.9);color:var(--cr);border-radius:999px;padding:6px 12px;font:600 13px Montserrat,sans-serif;min-height:38px;cursor:pointer}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:40;transition:opacity .35s}
+#flash.on{opacity:.85;transition:none}
 </style>
 </head>
 <body>
+<button class="sndbtn" id="snd" type="button" aria-pressed="true">🔊 Sound on</button>
+<div id="flash" aria-hidden="true"></div>
 <main class="app">
  <section class="screen on" id="intro" aria-labelledby="ti">
   <svg viewBox="0 0 300 300" width="110" height="110" role="img" aria-label="Logo">
@@ -139,6 +144,38 @@ const S = [{"id": "micro", "name": "Microaneurysms", "code": "TINY", "col": "#E8
 const MUG = {"micro": "<defs><radialGradient id=\"gm\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fm\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hm\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gm)\"/><path d=\"M-10 90 C80 120 160 70 310 110\" stroke=\"#A4161A\" stroke-width=\"10\" fill=\"none\"/><path d=\"M40 300 C80 220 150 200 200 120\" stroke=\"#A4161A\" stroke-width=\"6\" fill=\"none\"/><circle cx=\"90\" cy=\"170\" r=\"6\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"130\" cy=\"150\" r=\"5\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"170\" cy=\"190\" r=\"7\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"210\" cy=\"160\" r=\"5\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"120\" cy=\"215\" r=\"6\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"190\" cy=\"230\" r=\"5\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"240\" cy=\"200\" r=\"6\" fill=\"#8E0F12\" filter=\"url(#hm)\"/><circle cx=\"150\" cy=\"250\" r=\"4\" fill=\"#8E0F12\" filter=\"url(#hm)\"/>", "roth": "<defs><radialGradient id=\"gr\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fr\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hr\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gr)\"/><path d=\"M-10 70 C90 100 170 60 310 90\" stroke=\"#A4161A\" stroke-width=\"10\" fill=\"none\"/><ellipse cx=\"150\" cy=\"175\" rx=\"62\" ry=\"50\" fill=\"#8E0F12\" filter=\"url(#hr)\"/><ellipse cx=\"150\" cy=\"175\" rx=\"20\" ry=\"16\" fill=\"#FFF4E6\" filter=\"url(#hr)\"/>", "neo": "<defs><radialGradient id=\"gn\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fn\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hn\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gn)\"/><circle cx=\"150\" cy=\"150\" r=\"70\" fill=\"#F6C453\"/><circle cx=\"160\" cy=\"150\" r=\"30\" fill=\"#FFF4E6\" opacity=\".85\"/><path d=\"M110 120 q20 -30 40 0 t40 0 t-20 30\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M100 160 q15 25 35 5 t35 15 t30 -20\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M130 110 q-10 30 20 40 t10 40\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M175 115 q25 15 5 40 t25 35\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M95 140 q30 -10 50 15 t55 -5\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/><path d=\"M120 190 q20 -25 45 -5 t30 -20\" stroke=\"#A4161A\" stroke-width=\"2.2\" fill=\"none\"/>", "papill": "<defs><radialGradient id=\"gp\" cx=\"50%\" cy=\"50%\" r=\"70%\"><stop offset=\"0\" stop-color=\"#F29B5C\"/><stop offset=\"1\" stop-color=\"#C9561F\"/></radialGradient><filter id=\"fp\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"6\"/></filter><filter id=\"hp\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\"><feGaussianBlur stdDeviation=\"1.5\"/></filter></defs><rect width=\"300\" height=\"300\" fill=\"url(#gp)\"/><circle cx=\"150\" cy=\"150\" r=\"78\" fill=\"#F6C453\" filter=\"url(#fp)\"/><circle cx=\"150\" cy=\"150\" r=\"60\" fill=\"#F8D27A\" filter=\"url(#fp)\"/><path d=\"M150 150 C140 90 110 50 60 10\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><path d=\"M150 150 C140 210 110 250 60 290\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><path d=\"M150 150 C190 120 240 100 310 90\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><path d=\"M150 150 C190 180 240 200 310 220\" stroke=\"#A4161A\" stroke-width=\"9\" fill=\"none\" opacity=\".9\"/><circle cx=\"150\" cy=\"150\" r=\"70\" fill=\"#F6C453\" opacity=\".55\" filter=\"url(#fp)\"/>"};
 (function(){
 const $=id=>document.getElementById(id);
+/* ---- sound (Web Audio) ---- */
+let AC=null,sound=true,ambNodes=null,tickT=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function env(g,s,a,v,d){g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v,s+a);g.gain.exponentialRampToValueAtTime(.0001,s+d);}
+function tone(f,t0,d,type,v){const c=ac();if(!c||!sound)return;const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.value=f;const s=c.currentTime+t0;env(g,s,.012,v||.15,d);o.connect(g).connect(c.destination);o.start(s);o.stop(s+d+.05);}
+function noise(t0,d,lo,hi,v){const c=ac();if(!c||!sound)return;const n=c.createBufferSource(),b=c.createBuffer(1,Math.max(1,c.sampleRate*d|0),c.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;n.buffer=b;
+ const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=Math.sqrt(lo*hi);f.Q.value=Math.max(.3,Math.sqrt(lo*hi)/(hi-lo));const g=c.createGain();const s=c.currentTime+t0;env(g,s,.004,v||.2,d);n.connect(f).connect(g).connect(c.destination);n.start(s);n.stop(s+d+.05);}
+function thump(t0,f0,v,d){const c=ac();if(!c||!sound)return;const o=c.createOscillator(),g=c.createGain();const s=c.currentTime+t0;o.frequency.setValueAtTime(f0,s);o.frequency.exponentialRampToValueAtTime(40,s+.15);env(g,s,.004,v||.4,d||.35);o.connect(g).connect(c.destination);o.start(s);o.stop(s+(d||.35)+.05);}
+const SFX={
+ door:()=>{tone(118,0,.45,'square',.05);tone(122,0,.45,'square',.05);thump(.5,120,.45,.4);noise(.5,.12,300,2500,.18);},
+ slam:()=>{thump(0,140,.35,.3);noise(0,.08,800,4000,.12);},
+ send:()=>{noise(0,.12,1500,6000,.05);tone(880,0,.08,'triangle',.07);},
+ key:()=>noise(0,.03,2000,7000,.07),
+ reply:()=>{tone(523,0,.12,'sine',.12);tone(698,.08,.16,'sine',.12);},
+ lawyer:()=>{tone(147,0,.35,'triangle',.18);tone(139,.35,.6,'triangle',.18);},
+ shutter:()=>{noise(0,.05,1000,8000,.35);noise(.07,.06,600,5000,.25);thump(0,300,.12,.08);},
+ ok:()=>{tone(784,0,.22,'sine',.15);tone(1047,.1,.32,'sine',.15);},
+ no:()=>{tone(196,0,.18,'square',.05);tone(165,.12,.25,'square',.05);},
+ win:()=>{thump(0,110,.5,.5);noise(0,.2,200,3000,.2);[523,659,784,1047].forEach((f,i)=>tone(f,.35+i*.12,.5,'triangle',.13));},
+ lose:()=>{thump(0,110,.5,.5);[392,349,311,262].forEach((f,i)=>tone(f,.3+i*.18,.5,'triangle',.11));}
+};
+function typingTicks(){[0,.18,.33,.52,.7].forEach(t=>setTimeout(SFX.key,t*1000));}
+function flash(){const f=$('flash');f.classList.add('on');setTimeout(()=>f.classList.remove('on'),60);}
+function amb(on){const c=ac();if(!c)return;
+ if(on&&!ambNodes){const g=c.createGain();g.gain.value=sound?1:0;g.connect(c.destination);
+  const o1=c.createOscillator(),o2=c.createOscillator(),g1=c.createGain(),g2=c.createGain();o1.frequency.value=60;o2.frequency.value=120;g1.gain.value=.018;g2.gain.value=.008;o1.connect(g1).connect(g);o2.connect(g2).connect(g);
+  const p1=c.createOscillator(),p2=c.createOscillator(),pg=c.createGain(),lfo=c.createOscillator(),lg=c.createGain();p1.frequency.value=73.4;p2.frequency.value=110.2;pg.gain.value=.025;lfo.frequency.value=.12;lg.gain.value=.015;lfo.connect(lg).connect(pg.gain);p1.connect(pg);p2.connect(pg);pg.connect(g);
+  [o1,o2,p1,p2,lfo].forEach(o=>o.start());ambNodes={g,os:[o1,o2,p1,p2,lfo]};
+  tickT=setInterval(()=>{if(sound)noise(0,.025,2500,6000,.025);},1000);}
+ if(!on&&ambNodes){const n=ambNodes;ambNodes=null;clearInterval(tickT);n.g.gain.setTargetAtTime(0,c.currentTime,.3);setTimeout(()=>n.os.forEach(o=>{try{o.stop()}catch(e){}}),1500);}}
+$('snd').addEventListener('click',()=>{sound=!sound;$('snd').textContent=sound?'🔊 Sound on':'🔇 Sound off';$('snd').setAttribute('aria-pressed',sound);if(ambNodes)ambNodes.g.gain.value=sound?1:0;if(sound)SFX.reply();});
+
 if(REG_LINK){$('reg').href=REG_LINK;$('reg').target='_blank';$('reg').rel='noopener';}else $('reg').addEventListener('click',e=>{e.preventDefault();$('reg').textContent='Registration link coming soon';});
 let asked,order,idx,correct,t0,secs;
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);}
@@ -147,31 +184,31 @@ function sil(c,h){return `<svg viewBox="0 0 62 100" aria-hidden="true" preserveA
 function wall(){$('wall').innerHTML=S.map((s,i)=>`<button class="sus ${asked[i].size===3?'done':''}" data-i="${i}" type="button" aria-label="Question ${s.name}"><div class="sil">${sil(s.col,heights[i])}</div><span class="tag">${s.code}</span><span class="st">${asked[i].size===3?'✓ questioned':asked[i].size?'in progress':''}</span></button>`).join('');
  $('wall').querySelectorAll('.sus').forEach(b=>b.addEventListener('click',()=>interrogate(+b.dataset.i)));
  const n=asked.filter(a=>a.size>0).length;$('tomug').disabled=n<4;$('prog').textContent=n<4?`Questioned ${n} of 4 suspects.`:'All suspects questioned. Time to identify them.';}
-function start(){asked=S.map(()=>new Set());correct=[];t0=performance.now();wall();show('lineup');}
-function interrogate(i){const s=S[i];
+function start(){SFX.door();amb(true);asked=S.map(()=>new Set());correct=[];t0=performance.now();wall();show('lineup');}
+function interrogate(i){const s=S[i];SFX.slam();
  $('sheet').innerHTML=`<div class="shead"><div class="avatar" style="background:${s.col}">${s.code[0]}</div><div><div class="mono" style="font-size:11px;color:var(--yel)">SUSPECT · CODENAME "${s.code}"</div><div id="sname" style="font-weight:800;font-size:20px">${s.name}</div></div></div><div class="chat" id="chat"></div><div class="qs" id="qs"></div><button class="btn ghost" id="cl" type="button">Back to the line-up</button>`;
  $('modal').classList.add('on');
  const chat=$('chat');
  [...asked[i]].forEach(k=>{chat.insertAdjacentHTML('beforeend',`<div class="b me">${s.lines[k][0]}</div><div class="b them">${s.lines[k][1]}</div>`);});
  if(!asked[i].size)chat.insertAdjacentHTML('beforeend',`<div class="b them">...What do you want? I've got nothing to hide.</div>`);
  const qs=$('qs');qs.innerHTML=s.lines.map((l,k)=>`<button class="q" data-k="${k}" type="button" ${asked[i].has(k)?'disabled':''}>${l[0]}</button>`).join('');
- qs.querySelectorAll('.q').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;if(asked[i].has(k))return;asked[i].add(k);qs.querySelectorAll('.q').forEach(x=>x.disabled=true);
+ qs.querySelectorAll('.q').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;if(asked[i].has(k))return;asked[i].add(k);qs.querySelectorAll('.q').forEach(x=>x.disabled=true);SFX.send();typingTicks();
   chat.insertAdjacentHTML('beforeend',`<div class="b me">${s.lines[k][0]}</div><div class="typing" id="ty"><i></i><i></i><i></i></div>`);chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});
-  setTimeout(()=>{$('ty').remove();chat.insertAdjacentHTML('beforeend',`<div class="b them">${s.lines[k][1]}</div>`);qs.querySelectorAll('.q').forEach((x,j)=>x.disabled=asked[i].has(j));chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});
-   if(asked[i].size===3){chat.insertAdjacentHTML('beforeend',`<div class="b them" style="opacity:.8">That's all I'm saying without a lawyer.</div>`);qs.style.display='none';chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});}},900);}));
+  setTimeout(()=>{$('ty').remove();SFX.reply();chat.insertAdjacentHTML('beforeend',`<div class="b them">${s.lines[k][1]}</div>`);qs.querySelectorAll('.q').forEach((x,j)=>x.disabled=asked[i].has(j));chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});
+   if(asked[i].size===3){setTimeout(SFX.lawyer,300);chat.insertAdjacentHTML('beforeend',`<div class="b them" style="opacity:.8">That's all I'm saying without a lawyer.</div>`);qs.style.display='none';chat.lastElementChild.scrollIntoView({block:'end',behavior:'smooth'});}},900);}));
  $('cl').addEventListener('click',()=>{$('modal').classList.remove('on');wall();});$('cl').focus();}
 $('modal').addEventListener('click',e=>{if(e.target===$('modal')){$('modal').classList.remove('on');wall();}});
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function mugs(){order=shuffle([0,1,2,3]);idx=0;correct=[];show('mugs');mug();}
-function mug(){const s=S[order[idx]];$('mk').textContent=`MUGSHOT ${idx+1} OF 4`;$('mugsvg').innerHTML=MUG[s.id];$('plate').textContent=`CASE #014 · SUSPECT ${String(idx+1).padStart(2,'0')}`;
+function mug(){const s=S[order[idx]];SFX.shutter();flash();$('mk').textContent=`MUGSHOT ${idx+1} OF 4`;$('mugsvg').innerHTML=MUG[s.id];$('plate').textContent=`CASE #014 · SUSPECT ${String(idx+1).padStart(2,'0')}`;
  $('fb').textContent='';$('next').style.display='none';
  $('opts').innerHTML=shuffle([0,1,2,3]).map(j=>`<button class="opt" data-j="${j}" type="button">${S[j].name}</button>`).join('');
- $('opts').querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j,ok=j===order[idx];correct[order[idx]]=ok;
+ $('opts').querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j,ok=j===order[idx];correct[order[idx]]=ok;ok?SFX.ok():SFX.no();
   $('opts').querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(+x.dataset.j===order[idx])x.classList.add('ok');});if(!ok)b.classList.add('no');
   $('fb').textContent=ok?`Correct. "${S[order[idx]].lines[2][1]}"`:`Not quite. That was ${S[order[idx]].name}.`;
   $('next').textContent=idx<3?'Next mugshot':'See the case report';$('next').style.display='inline-flex';$('next').focus();}));}
 $('next').addEventListener('click',()=>{idx++;if(idx<4)mug();else end();});
-function end(){secs=Math.round((performance.now()-t0)/1000);const n=correct.filter(Boolean).length;
+function end(){amb(false);secs=Math.round((performance.now()-t0)/1000);const n=correct.filter(Boolean).length;n===4?SFX.win():SFX.lose();
  $('score').textContent=n+' of 4';$('stime').textContent=`suspects identified in ${secs} seconds`;
  $('te').innerHTML=n===4?'Case closed,<br>detective.':n>=2?'Almost there.':'They fooled you.';
  $('emsg').textContent=n===4?'You identified every suspect. Now learn to catch them in real photos.':'Some suspects are good at hiding. The real line-up is waiting.';
