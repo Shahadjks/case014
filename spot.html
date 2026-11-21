@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Case #014: Spot the Difference</title>
+<meta property="og:title" content="Case #014: Spot the Difference">
+<meta property="og:description" content="One retina is healthy. The other is hiding 5 changes. Can you find them?">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+:root{--navy:#0F1B2D;--or:#E8743B;--red:#A4161A;--yel:#F6C453;--cr:#FFF4E6;--mut:#C9C2B8;--card:#1B2A40}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--navy);color:var(--cr);font-family:Montserrat,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.app{max-width:480px;margin:0 auto;padding:16px 18px 28px}
+.mono{font-family:'Courier Prime',monospace;letter-spacing:.16em}
+.screen{display:none;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.screen.on{display:flex}
+h1{font-weight:800;font-size:38px;line-height:1;margin:0;letter-spacing:-.5px}
+h1 .o{color:var(--or)}
+p{margin:0;font-size:16px;line-height:1.5;color:var(--mut)}
+.kick{color:var(--yel);font-size:13px}
+.btn{appearance:none;border:0;border-radius:999px;background:var(--yel);color:var(--navy);font:800 17px Montserrat,sans-serif;padding:15px 24px;min-height:50px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:100%;max-width:340px}
+.btn.wa{background:#25D366;color:#06301A}
+.btn.ghost{background:transparent;color:var(--cr);border:2px solid #3A4A60}
+.btn.sm{width:auto;min-height:40px;padding:8px 16px;font-size:14px}
+.btn:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+.pair{display:flex;gap:10px;justify-content:center;margin:6px 0}
+.pair .mini{width:120px;height:120px}
+.rules{display:flex;flex-direction:column;gap:8px;width:100%;max-width:340px;text-align:left}
+.rule{display:flex;gap:12px;align-items:center;background:var(--card);border-radius:14px;padding:11px 14px;font-size:15px;color:var(--cr)}
+.rule b{flex:0 0 34px;height:34px;border-radius:17px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:14px}
+.hud{width:100%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--navy);padding:6px 0;z-index:4}
+.timer{font-family:'Courier Prime',monospace;font-weight:700;font-size:34px;color:var(--yel);min-width:84px}
+.timer.low{color:var(--or)}
+.dots{display:flex;gap:6px}
+.dot{width:16px;height:16px;border-radius:8px;border:3px solid var(--yel)}
+.dot.f{background:var(--yel)}
+.lbl{font-family:'Courier Prime',monospace;font-weight:700;font-size:12px;letter-spacing:.2em;align-self:flex-start;padding:4px 10px;border-radius:6px}
+.lbl.r{background:var(--card);color:var(--mut)}
+.lbl.s{background:var(--red);color:var(--cr)}
+.fd{width:min(78vw,35vh,360px);height:auto;aspect-ratio:1/1;border-radius:50%;display:block;touch-action:manipulation;cursor:crosshair}
+.boards{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;width:100%}
+.toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--yel);color:var(--navy);font-family:'Courier Prime',monospace;font-weight:700;padding:10px 16px;letter-spacing:.12em;font-size:15px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;z-index:9;border-radius:6px}
+.toast.on{opacity:1}.toast.bad{background:var(--red);color:var(--cr)}
+.card{width:100%;max-width:340px;background:var(--cr);color:var(--navy);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;text-align:left}
+.card .mono{font-size:12px;color:var(--red)}
+.card .big{font-weight:800;font-size:30px}
+.list{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px}
+.li{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:10px;padding:9px 12px;font-size:14px;text-align:left}
+.li span:last-child{font-family:'Courier Prime',monospace;font-weight:700;font-size:13px}
+.ok{color:var(--yel)}.no{color:var(--or)}
+.small{font-size:13px;color:var(--mut)}
+@keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+.hint{animation:pulse .5s ease-in-out 3}
+</style>
+</head>
+<body>
+<main class="app">
+ <section class="screen on" id="intro" aria-labelledby="ti">
+  <svg viewBox="0 0 300 300" width="120" height="120" role="img" aria-label="Spot the Diagnosis logo">
+<defs><radialGradient id="rga" cx="42%" cy="50%" r="62%"><stop offset="0" stop-color="#F39A5A"></stop><stop offset="0.65" stop-color="#E8743B"></stop><stop offset="1" stop-color="#B4441C"></stop></radialGradient>
+<clipPath id="cla"><circle cx="130" cy="130" r="98"></circle></clipPath></defs>
+<path d="M196 196 L266 266" stroke="#FFF4E6" stroke-width="30" stroke-linecap="round" fill="none"></path>
+<path d="M200 200 L222 222" stroke="#F6C453" stroke-width="36" fill="none"></path>
+<circle cx="130" cy="130" r="98" fill="url(#rga)"></circle>
+<g clip-path="url(#cla)" fill="none" stroke="#A4161A" stroke-linecap="round">
+<path d="M168 114 C150 70 100 60 30 82" stroke-width="5.5"></path>
+<path d="M170 110 C160 58 122 38 66 26" stroke-width="3.5"></path>
+<path d="M168 136 C150 184 100 196 30 178" stroke-width="5.5"></path>
+<path d="M170 140 C160 196 122 218 66 232" stroke-width="3.5"></path>
+<path d="M186 118 C206 100 222 94 244 88" stroke-width="3"></path>
+<path d="M186 134 C206 152 222 160 244 170" stroke-width="3"></path>
+<path d="M118 72 C114 94 102 100 88 112" stroke-width="2"></path>
+<path d="M118 188 C112 166 100 160 86 148" stroke-width="2"></path>
+<path d="M150 86 C142 70 140 56 146 40" stroke-width="2"></path>
+<path d="M150 176 C142 192 140 206 146 222" stroke-width="2"></path>
+</g>
+<circle cx="92" cy="128" r="13" fill="#8E2A12" opacity="0.55"></circle>
+<circle cx="172" cy="124" r="19" fill="#F6C453"></circle>
+<circle cx="174" cy="124" r="8" fill="#FFF4E6" opacity="0.85"></circle>
+<g stroke="#FFF4E6" stroke-width="3.5" stroke-linecap="round" fill="none">
+<circle cx="92" cy="128" r="23"></circle>
+<path d="M92 98 V110"></path><path d="M92 146 V158"></path><path d="M62 128 H74"></path><path d="M110 128 H122"></path></g>
+<circle cx="130" cy="130" r="98" fill="none" stroke="#FFF4E6" stroke-width="14"></circle>
+</svg>
+  <span class="mono kick">CASE #014 · LINE-UP</span>
+  <h1 id="ti">SPOT THE<br><span class="o">DIFFERENCE</span></h1>
+  <p>One retina is healthy. The other is hiding <b style="color:var(--cr)">5 changes</b>. Find them all.</p>
+  <div class="rules">
+   <div class="rule"><b>5</b><span>differences between the two retinas</span></div>
+   <div class="rule"><b>60</b><span>seconds on the clock</span></div>
+   <div class="rule"><b>−3</b><span>seconds for every wrong tap</span></div>
+  </div>
+  <button class="btn" id="start" type="button">Start the investigation</button>
+  <span class="small">Fundus Photography: Spot the Diagnosis · 14 December 2026</span>
+ </section>
+
+ <section class="screen" id="game" aria-label="Spot the difference">
+  <div class="hud">
+   <button class="btn ghost sm" id="hint" type="button">Hint −5s</button>
+   <div class="timer" id="timer">60.0</div>
+   <div class="dots" aria-label="Differences found"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  </div>
+  <div class="boards">
+   <span class="lbl r">REFERENCE · HEALTHY</span>
+   <svg viewBox="0 0 1000 1000" class="fd" data-k="a" role="img" aria-label="Reference fundus photograph"><defs><radialGradient id="ga" cx="48%" cy="50%" r="55%"><stop offset="0" stop-color="#F29B5C"/><stop offset="0.6" stop-color="#E06B33"/><stop offset="0.92" stop-color="#9C3A16"/><stop offset="1" stop-color="#3a1408"/></radialGradient>
+<filter id="ba" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5"/></filter><filter id="sa" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2"/></filter>
+<clipPath id="ca"><circle cx="500" cy="500" r="470"/></clipPath><radialGradient id="ma" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7a2410" stop-opacity="0.7"/><stop offset="1" stop-color="#7a2410" stop-opacity="0"/></radialGradient></defs>
+<rect width="1000" height="1000" fill="#000"/><g clip-path="url(#ca)"><circle cx="500" cy="500" r="470" fill="url(#ga)"/><circle cx="370" cy="510" r="70" fill="url(#ma)"/><path d="M520 470 C440 290 260 230 60 300" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 455 C490 250 360 150 160 90" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M520 530 C440 720 260 780 60 720" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 545 C490 760 360 860 160 930" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M570 480 C660 410 760 380 900 350" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M570 520 C660 600 760 640 900 690" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M600 500 C720 500 820 510 940 500" stroke="#A4161A" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M330 300 C320 380 280 410 230 450" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M330 720 C320 640 280 610 230 570" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 250 C390 200 380 150 400 90" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 760 C390 810 380 860 400 930" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M200 290 C180 340 150 360 110 380" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M200 730 C180 680 150 660 110 640" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 420 C730 330 760 280 800 220" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 590 C730 680 760 740 800 800" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/>
+<circle cx="560" cy="500" r="48" fill="#F6C453"/><circle cx="568" cy="500" r="20" fill="#FFF4E6" opacity="0.88"/></g><g class="marks"></g></svg>
+   <span class="lbl s">SUSPECT · 5 CHANGES</span>
+   <svg viewBox="0 0 1000 1000" class="fd" data-k="z" role="img" aria-label="Suspect fundus photograph"><defs><radialGradient id="gz" cx="48%" cy="50%" r="55%"><stop offset="0" stop-color="#F29B5C"/><stop offset="0.6" stop-color="#E06B33"/><stop offset="0.92" stop-color="#9C3A16"/><stop offset="1" stop-color="#3a1408"/></radialGradient>
+<filter id="bz" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5"/></filter><filter id="sz" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="2"/></filter>
+<clipPath id="cz"><circle cx="500" cy="500" r="470"/></clipPath><radialGradient id="mz" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#7a2410" stop-opacity="0.7"/><stop offset="1" stop-color="#7a2410" stop-opacity="0"/></radialGradient></defs>
+<rect width="1000" height="1000" fill="#000"/><g clip-path="url(#cz)"><circle cx="500" cy="500" r="470" fill="url(#gz)"/><circle cx="370" cy="510" r="70" fill="url(#mz)"/><path d="M520 470 C440 290 260 230 60 300" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 455 C490 250 360 150 160 90" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M520 530 C440 720 260 780 60 720" stroke="#A4161A" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M525 545 C490 760 360 860 160 930" stroke="#A4161A" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M570 480 C660 410 760 380 900 350" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M570 520 C660 600 760 640 900 690" stroke="#A4161A" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M600 500 C720 500 820 510 940 500" stroke="#A4161A" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M330 300 C320 380 280 410 230 450" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M330 720 C320 640 280 610 230 570" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 250 C390 200 380 150 400 90" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M420 760 C390 810 380 860 400 930" stroke="#A4161A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M200 290 C180 340 150 360 110 380" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M200 730 C180 680 150 660 110 640" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 420 C730 330 760 280 800 220" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M700 590 C730 680 760 740 800 800" stroke="#A4161A" stroke-width="4" fill="none" stroke-linecap="round"/>
+<circle cx="560" cy="500" r="48" fill="#F6C453"/><circle cx="568" cy="500" r="36" fill="#FFF4E6" opacity="0.88"/><ellipse cx="640" cy="300" rx="30" ry="18" fill="#FFF4E6" opacity="0.85" filter="url(#bz)"/><ellipse cx="300" cy="650" rx="34" ry="8" fill="#8E0F12" transform="rotate(25 300 650)" filter="url(#sz)"/><circle cx="364" cy="523" r="6" fill="#F7D46A"/><circle cx="405" cy="518" r="7" fill="#F7D46A"/><circle cx="354" cy="491" r="6" fill="#F7D46A"/><circle cx="366" cy="504" r="7" fill="#F7D46A"/><circle cx="378" cy="540" r="6" fill="#F7D46A"/><circle cx="374" cy="542" r="5" fill="#F7D46A"/><circle cx="388" cy="542" r="7" fill="#F7D46A"/><circle cx="373" cy="491" r="5" fill="#F7D46A"/><circle cx="360" cy="547" r="5" fill="#F7D46A"/><rect x="700" y="585" width="11" height="11" fill="#FBE38A" transform="rotate(30 700 585)"/><rect x="715" y="600" width="11" height="11" fill="#FBE38A" transform="rotate(30 715 600)"/><rect x="728" y="590" width="11" height="11" fill="#FBE38A" transform="rotate(30 728 590)"/><rect x="690" y="605" width="11" height="11" fill="#FBE38A" transform="rotate(30 690 605)"/><rect x="740" y="610" width="11" height="11" fill="#FBE38A" transform="rotate(30 740 610)"/></g><g class="marks"></g></svg>
+  </div>
+  <p class="small">Tap the differences on either retina.</p>
+ </section>
+
+ <section class="screen" id="end" aria-labelledby="te">
+  <span class="mono kick" id="ek">CASE #014 · REPORT</span>
+  <h1 id="te">Title</h1>
+  <div class="card"><span class="mono">DETECTIVE REPORT</span><span class="big" id="score">5 of 5</span><span style="font-size:14px" id="stime">in 0.0 seconds</span></div>
+  <div class="list" id="list"></div>
+  <p id="emsg"></p>
+  <p style="color:var(--cr)">Learn to read every retina with <b>Dr. Fadwa AlAdel</b> on <b>14 December</b>.</p>
+  <a class="btn" id="reg" href="#register">Register for the workshop</a>
+  <a class="btn wa" id="wa" href="#">Challenge your WhatsApp group</a>
+  <button class="btn ghost" type="button" id="again">Play again</button>
+  <a class="btn ghost" href="index.html">Main case: The Chief's desk</a>
+ </section>
+ <div class="toast" id="toast" role="status"></div>
+</main>
+<script>
+// Paste the links here when they are ready:
+const REG_LINK = "";   // registration form
+const GAME_LINK = (/^https?:$/.test(location.protocol)&&!/claude|anthropic/.test(location.hostname))?location.origin+location.pathname:"";  // filled automatically on the live site
+(function(){
+ const $=id=>document.getElementById(id);
+ const D=[{n:"Cotton wool spot",x:640,y:300,r:70},{n:"Flame hemorrhage",x:300,y:650,r:70},{n:"Drusen",x:380,y:520,r:85},{n:"Hard exudates",x:715,y:598,r:70},{n:"Enlarged optic cup",x:568,y:500,r:62}];
+ const NS="http://www.w3.org/2000/svg";
+ let found,left,last,t0,raf,done,used;
+ const svgs=[...document.querySelectorAll('.fd')];
+ if(REG_LINK){$('reg').href=REG_LINK;$('reg').target='_blank';$('reg').rel='noopener';}
+ else $('reg').addEventListener('click',e=>{e.preventDefault();$('reg').textContent='Registration link coming soon';});
+ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);}
+ function toast(m,bad){const t=$('toast');t.textContent=m;t.classList.toggle('bad',!!bad);t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),850);}
+ function dots(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('f',i<found.size));}
+ function tick(){const now=performance.now();left-=(now-last)/1000;last=now;if(left<=0){left=0;$('timer').textContent='0.0';return finish();}
+  $('timer').textContent=left.toFixed(1);$('timer').classList.toggle('low',left<15);raf=requestAnimationFrame(tick);}
+ function start(){found=new Set();left=60;done=false;svgs.forEach(s=>s.querySelector('.marks').innerHTML='');dots();show('game');last=t0=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
+ function pt(s,e){const p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(s.getScreenCTM().inverse());}
+ function circle(d,cls){svgs.forEach(s=>{const c=document.createElementNS(NS,'circle');c.setAttribute('cx',d.x);c.setAttribute('cy',d.y);c.setAttribute('r',d.r);c.setAttribute('fill','none');c.setAttribute('stroke','#F6C453');c.setAttribute('stroke-width','11');if(cls)c.setAttribute('class',cls);s.querySelector('.marks').appendChild(c);if(cls)setTimeout(()=>c.remove(),1600);});}
+ function miss(s,p){const g=document.createElementNS(NS,'path');g.setAttribute('d',`M${p.x-22} ${p.y-22}L${p.x+22} ${p.y+22}M${p.x+22} ${p.y-22}L${p.x-22} ${p.y+22}`);g.setAttribute('stroke','#A4161A');g.setAttribute('stroke-width','11');g.setAttribute('stroke-linecap','round');s.querySelector('.marks').appendChild(g);setTimeout(()=>g.remove(),600);}
+ svgs.forEach(s=>s.addEventListener('pointerdown',e=>{if(done)return;const p=pt(s,e);
+  const i=D.findIndex(d=>Math.hypot(p.x-d.x,p.y-d.y)<=d.r);
+  if(i>=0&&found.has(i)){toast('ALREADY FOUND');return;}
+  if(i>=0){found.add(i);circle(D[i]);dots();toast(D[i].n.toUpperCase());if(found.size===5)finish();}
+  else{left=Math.max(0,left-3);miss(s,p);toast('−3 SECONDS',true);}}));
+ $('hint').addEventListener('click',()=>{if(done)return;const i=D.findIndex((d,k)=>!found.has(k));if(i<0)return;left=Math.max(0,left-5);circle(D[i],'hint');toast('HINT −5s',true);});
+ function finish(){if(done)return;done=true;cancelAnimationFrame(raf);used=Math.min(60,(performance.now()-t0)/1000);
+  const n=found.size;
+  $('score').textContent=n+' of 5';$('stime').textContent=n===5?('in '+used.toFixed(1)+' seconds'):'before time ran out';
+  $('te').innerHTML=n===5?'Sharp eye,<br>detective.':(n>=3?'So close.':'The evidence<br>got away.');
+  $('ek').textContent=n===5?'CASE #014 · ALL EVIDENCE FOUND':"CASE #014 · TIME'S UP";
+  $('emsg').textContent=n===5?'You found every difference. Do you know what they mean?':'Some changes hide from untrained eyes.';
+  $('list').innerHTML=D.map((d,k)=>`<div class="li"><span>${d.n}</span><span class="${found.has(k)?'ok':'no'}">${found.has(k)?'FOUND':'MISSED'}</span></div>`).join('');
+  const msg=(n===5?`I found all 5 differences in ${used.toFixed(1)}s`:`I found ${n} of 5 differences`)+` in Case #014 🔍 Can you beat me?`+(GAME_LINK?`\n${GAME_LINK}`:'');
+  $('wa').href='https://wa.me/?text='+encodeURIComponent(msg);
+  setTimeout(()=>show('end'),n===5?700:200);}
+ $('start').addEventListener('click',start);$('again').addEventListener('click',start);
+})();
+</script>
+</body>
+</html>
