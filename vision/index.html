@@ -29,12 +29,12 @@ button{font-family:'Reem Kufi',sans-serif;cursor:pointer;border:0;color:inherit}
 .dunes{position:absolute;bottom:0;left:0;right:0;pointer-events:none}
 /* ---- start ---- */
 #s0{justify-content:center;gap:6px;padding:24px;text-align:center}
-#s0 .eyewrap{transform:scaleY(.06);transition:transform 1.1s cubic-bezier(.3,1.5,.5,1);margin:8px 0}
-#s0.awake .eyewrap{transform:scaleY(1)}
+#s0 .eyewrap{margin:8px 0;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.04)}}
 #s0 .t{font-size:64px;line-height:1.05;margin:0}
 #s0 .d{font-size:21px;color:#5a4636;max-width:320px;line-height:1.6;margin:4px 0 10px}
 #s0 .tag{font-size:15px;color:var(--brick);letter-spacing:.5px}
-.wake{font-size:17px;color:var(--date);animation:pulse 2s infinite}
+.wake{font-size:17px;color:var(--paper);background:var(--date);border-radius:30px;padding:10px 22px;margin-top:6px;animation:pulse 2s infinite}
 @keyframes pulse{50%{opacity:.45}}
 /* ---- house ---- */
 #s1{justify-content:flex-end}
@@ -158,9 +158,8 @@ button{font-family:'Reem Kufi',sans-serif;cursor:pointer;border:0;color:inherit}
 <path d="M150 16 L153.92 26.08 L164 30 L153.92 33.92 L150 44 L146.08 33.92 L136 30 L146.08 26.08 Z" fill="#2E6F86"></path>
 </svg></button>
 <h1 class="t ruqaa">صندوق الجدة</h1>
-<div class="d" id="d0">في بيت طين قديم… صندوق ما انفتح من سنين.</div>
-<div class="wake kufi" id="wake">اضغط على العين وافتحها 👆</div>
-<button class="btn" id="go" style="display:none">ادخل البيت</button>
+<div class="d" id="d0">في بيت طين قديم… صندوق ما انفتح من سنين، ويقولون إنه يحكي.</div>
+<div class="wake kufi" id="wake">👆 اضغط على العين عشان تدخل</div>
 <svg class="dunes" viewBox="0 0 480 90" preserveAspectRatio="none" height="80" width="100%" aria-hidden="true"><path d="M0 40 C120 10 220 30 300 50 C380 70 430 40 480 30 V90 H0Z" fill="#D2B48C"/><path d="M0 70 C140 46 240 60 320 70 C400 80 440 62 480 58 V90 H0Z" fill="#B07A52"/></svg>
 </section>
 
@@ -309,19 +308,18 @@ function runLines(k,el){stopVoices(k);const L=LINES[k];el.innerHTML=L.map(t=>`<d
 function ac(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)()}if(ctx.state==='suspended')ctx.resume();return ctx}
 function noiseBuf(sec){const c=ac(),b=c.createBuffer(1,Math.max(1,c.sampleRate*sec|0),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
 function bell(f,t0,dur=2.2,vol=.1,dest){const c=ac(),o=c.createOscillator(),o2=c.createOscillator(),g=c.createGain(),g2=c.createGain();o.frequency.value=f;o2.frequency.value=f*2.01;g2.gain.value=.25;o2.connect(g2).connect(g);o.connect(g);g.connect(dest||c.destination);const t=c.currentTime+t0;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.start(t);o2.start(t);o.stop(t+dur);o2.stop(t+dur)}
-function pluck(f,t0,vol,dest){const c=ac(),t=c.currentTime+t0,n=c.createBufferSource(),dl=c.createDelay(),fb=c.createGain(),lp=c.createBiquadFilter(),g=c.createGain(),eg=c.createGain();n.buffer=noiseBuf(.02);dl.delayTime.value=1/f;fb.gain.value=.985;lp.type='lowpass';lp.frequency.value=2200;n.connect(eg);eg.gain.value=.5;eg.connect(dl);dl.connect(lp).connect(fb).connect(dl);lp.connect(g);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+2.6);g.connect(dest||c.destination);n.start(t);setTimeout(()=>{try{fb.disconnect()}catch(e){}},(t0+3)*1000)}
+function pluck(f,t0,vol,dest){const c=ac(),t=c.currentTime+t0,o=c.createOscillator(),lp=c.createBiquadFilter(),g=c.createGain();o.type='triangle';o.frequency.value=f;lp.type='lowpass';lp.frequency.value=1400;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+1.1);o.connect(lp).connect(g).connect(dest||c.destination);o.start(t);o.stop(t+1.2)}
 function thud(t0=0,f=70,vol=.5){const c=ac(),o=c.createOscillator(),g=c.createGain(),t=c.currentTime+t0;o.frequency.setValueAtTime(f*1.8,t);o.frequency.exponentialRampToValueAtTime(f*.6,t+.25);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.4)}
 function click(t0=0,vol=.25,f=2500){const c=ac(),s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain(),t=c.currentTime+t0;s.buffer=noiseBuf(.05);fl.type='bandpass';fl.frequency.value=f;fl.Q.value=3;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+.045);s.connect(fl).connect(g).connect(c.destination);s.start(t)}
-function creak(){const c=ac(),o=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain(),l=c.createOscillator(),lg=c.createGain(),t=c.currentTime;o.type='sawtooth';o.frequency.value=150;l.frequency.value=14;lg.gain.value=35;l.connect(lg).connect(o.frequency);fl.type='bandpass';fl.frequency.value=900;fl.Q.value=6;o.frequency.linearRampToValueAtTime(95,t+1.6);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.06,t+.2);g.gain.linearRampToValueAtTime(0,t+1.8);o.connect(fl).connect(g).connect(c.destination);o.start(t);l.start(t);o.stop(t+1.9);l.stop(t+1.9)}
+function creak(){const c=ac(),o=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain(),l=c.createOscillator(),lg=c.createGain(),t=c.currentTime;o.type='triangle';o.frequency.value=150;l.frequency.value=9;lg.gain.value=20;l.connect(lg).connect(o.frequency);fl.type='bandpass';fl.frequency.value=900;fl.Q.value=6;o.frequency.linearRampToValueAtTime(95,t+1.6);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.03,t+.2);g.gain.linearRampToValueAtTime(0,t+1.8);o.connect(fl).connect(g).connect(c.destination);o.start(t);l.start(t);o.stop(t+1.9);l.stop(t+1.9)}
 function whoosh(dur=1.4,vol=.1){const c=ac(),s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain(),t=c.currentTime;s.buffer=noiseBuf(dur);fl.type='bandpass';fl.Q.value=1.2;fl.frequency.setValueAtTime(300,t);fl.frequency.exponentialRampToValueAtTime(2200,t+dur);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+dur*.4);g.gain.linearRampToValueAtTime(0,t+dur);s.connect(fl).connect(g).connect(c.destination);s.start(t)}
 const HJ=[146.83,155.56,185,196,220,233.08,261.63,293.66,311.13,369.99,392,440];
 // warm music bed: soft oud-like plucks in Hijaz over a quiet drone, ducked under the voice
 function startBed(){if(bed||muted)return;const c=ac(),g=c.createGain();g.gain.value=0;g.connect(c.destination);g.gain.linearRampToValueAtTime(.9,c.currentTime+2);
- const dr=c.createOscillator(),dg=c.createGain();dr.frequency.value=73.4;dg.gain.value=.018;dr.connect(dg).connect(g);dr.start();
- const pat=[[7,0],[9,.5],[10,1],[9,1.5],[7,2.25],[5,3],[4,3.5],[7,4.5],[3,6],[4,6.5],[5,7],[4,7.5],[3,8],[0,9]];
- const loop=()=>{if(!bed)return;pat.forEach(([n,t])=>pluck(HJ[n],t*.42,.09,g));bed.to=setTimeout(loop,10*420)};
- bed={g,dr,to:null};loop()}
-function stopBed(){if(!bed)return;const b=bed;bed=null;clearTimeout(b.to);b.g.gain.setTargetAtTime(0,ac().currentTime,.4);setTimeout(()=>{try{b.dr.stop()}catch(e){}},1500)}
+  const pat=[[7,0],[9,.5],[10,1],[9,1.5],[7,2.25],[5,3],[4,3.5],[7,4.5],[3,6],[4,6.5],[5,7],[4,7.5],[3,8],[0,9]];
+ const loop=()=>{if(!bed)return;pat.forEach(([n,t])=>pluck(HJ[n]*2,t*.45,.035,g));bed.to=setTimeout(loop,14*450)};
+ bed={g,to:null};loop()}
+function stopBed(){if(!bed)return;const b=bed;bed=null;clearTimeout(b.to);b.g.gain.setTargetAtTime(0,ac().currentTime,.4);}
 function duck(on){if(bed)bed.g.gain.setTargetAtTime(on?.35:.9,ac().currentTime,.3)}
 function sfx(n){if(muted)return;try{
  if(n==='dial')click(0,.18,1800);
@@ -338,9 +336,7 @@ function sfx(n){if(muted)return;try{
 $('snd').onclick=()=>{muted=!muted;$('snd').textContent=muted?'🔇':'🔊';if(muted){stopVoices();stopBed()}else startBed()};
 function show(id){document.querySelectorAll('.scene').forEach(s=>s.classList.toggle('on',s.id===id))}
 // ---- start: open the eye ----
-let awake=false;
-$('eye').onclick=()=>{if(awake){$('go').click();return}awake=true;ac();unlockAll();stopVoices();sfx('eye');$('s0').classList.add('awake');$('wake').style.display='none';$('d0').textContent='في بيت طين قديم… صندوق ما انفتح من سنين، ويقولون إنه يحكي.';setTimeout(()=>{$('go').style.display='inline-block'},700)};
-$('go').onclick=()=>{ac();unlockAll();stopVoices();startBed();sfx('knock');show('s1')};
+$('eye').onclick=()=>{ac();unlockAll();stopVoices();startBed();sfx('eye');setTimeout(()=>{sfx('knock');show('s1')},500)};
 // ---- door ----
 let doorOpened=false;
 function openDoor(){if(doorOpened)return;doorOpened=true;$('knock').style.display='none';sfx('door');$('door').classList.add('open');$('light').classList.add('on');setTimeout(()=>{show('s2');setTimeout(()=>runLines('intro',$('sub')),800)},1800)}
