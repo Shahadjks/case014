@@ -167,6 +167,9 @@ const A=k=>$('a-'+k);
 let sound=true;
 function play(k,loop){try{const a=A(k);a.currentTime=0;a.loop=!!loop;a.muted=!sound&&k==='loop';const p=a.play();if(p)p.catch(()=>{});}catch(e){}}
 function stop(k){try{A(k).pause();}catch(e){}}
+const VOICES=['chief','lab1','tip','lab2','win','lose'];
+function unlockAll(){['ring','loop'].concat(VOICES).forEach(k=>{try{const a=A(k);a.muted=false;const p=a.play();a.pause();a.currentTime=0;if(p&&p.catch)p.catch(()=>{});}catch(e){}});}
+function stopVoices(except){VOICES.forEach(k=>{if(k!==except){try{const a=A(k);a.pause();a.currentTime=0;}catch(e){}}});}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo(0,0);}
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2400);}
 if(REG_LINK){$('reg').href=REG_LINK;$('reg').target='_blank';$('reg').rel='noopener';}else $('reg').addEventListener('click',e=>{e.preventDefault();$('reg').textContent='Registration link coming soon';});
@@ -175,11 +178,11 @@ function reset(){st={asked:S.map(()=>new Set()),clues:{},left:180,running:false,
 const mugsvg=(id,w)=>`<svg viewBox="0 0 300 300" ${w?`width="${w}" height="${w}"`:''} aria-hidden="true">${MUG[id]}</svg>`;
 /* ---- calls ---- */
 let onCallEnd=null;
-function ringCall(key,after){st.inCall=true;onCallEnd=after||null;const c=CALLS[key];
+function ringCall(key,after){stopVoices();st.inCall=true;onCallEnd=after||null;const c=CALLS[key];
  $('call').classList.add('on');$('call').classList.remove('live');$('cwho').textContent=c.who;$('cst').textContent=key==='tip'?'NO CALLER ID':'INCOMING CALL';
  $('subs').textContent='';$('cwave').style.visibility='hidden';$('ans').style.display='flex';$('hang').style.display='none';
  stop('loop');play('ring',true);$('ans').onclick=()=>answer(key);$('ans').focus();}
-function answer(key){stop('ring');const c=CALLS[key];$('call').classList.add('live');$('cst').textContent='ON THE LINE';$('ans').style.display='none';$('hang').style.display='flex';$('cwave').style.visibility='visible';
+function answer(key){stop('ring');stopVoices(key);const c=CALLS[key];$('call').classList.add('live');$('cst').textContent='ON THE LINE';$('ans').style.display='none';$('hang').style.display='flex';$('cwave').style.visibility='visible';
  const a=A(key);play(key);const subs=$('subs');subs.textContent=c.lines[0];let i=0;
  const iv=setInterval(()=>{const d=a.duration&&isFinite(a.duration)?a.duration:c.lines.length*3.5;const k=c.t?c.t.filter(x=>a.currentTime>=x).length-1:Math.min(c.lines.length-1,Math.floor(a.currentTime/d*c.lines.length));if(k!==i){i=k;subs.textContent=c.lines[k];}if(a.ended){clearInterval(iv);$('cwave').style.visibility='hidden';$('hang').classList.add('blink');}},120);
  $('hang').onclick=()=>{clearInterval(iv);stop(key);$('hang').classList.remove('blink');$('call').classList.remove('on');st.inCall=false;
@@ -245,7 +248,7 @@ function report(win,sus,timeout,used){
  const msg=(win?`I solved CODE RED in Case #014 in ${Math.floor(used/60)}:${String(used%60).padStart(2,'0')} 🚨🕵️‍♀️ Can you?`:`The culprit escaped me in CODE RED, Case #014 🚨 Think you can catch them?`)+(GAME_LINK?`\n${GAME_LINK}`:'');
  $('wa').href='https://wa.me/?text='+encodeURIComponent(msg);show('end');}
 /* ---- start ---- */
-$('go').addEventListener('click',()=>{['ring','loop','chief','lab1','tip','lab2','win','lose'].forEach(k=>{try{const a=A(k);a.muted=true;const p=a.play();if(p)p.then(()=>{a.pause();a.currentTime=0;a.muted=false;}).catch(()=>{a.muted=false;});}catch(e){}});
+$('go').addEventListener('click',()=>{unlockAll();
  reset();setTimeout(()=>ringCall('chief',startHQ),400);});
 $('again').addEventListener('click',()=>{reset();ringCall('chief',startHQ);});
 $('snd').addEventListener('click',()=>{sound=!sound;$('snd').textContent=sound?'Sound on':'Sound off';$('snd').setAttribute('aria-pressed',sound);A('loop').muted=!sound;});

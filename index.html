@@ -272,7 +272,7 @@ const VENUE = "College of Medicine, Classroom 0.205";
 (function(){
 const $=id=>document.getElementById(id);
 const A=k=>$('a-'+k);
-function play(k){try{const a=A(k);a.currentTime=0;const p=a.play();if(p)p.catch(()=>{});}catch(e){}}
+function play(k){try{if(['chief','hint','radio','unlock'].includes(k))['chief','hint','radio','unlock'].forEach(o=>{if(o!==k){try{const x=A(o);x.pause();x.currentTime=0;}catch(e){}}});const a=A(k);a.currentTime=0;const p=a.play();if(p)p.catch(()=>{});}catch(e){}}
 function stop(k){try{A(k).pause();}catch(e){}}
 function show(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v));}
 function toast(m,ms){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),ms||2200);}
@@ -289,7 +289,7 @@ let state={answered:false,seen:new Set(),t0:0,ringT:null,hintT:null,hinted:false
 const OBJ=['o-cal','o-lap','o-note','o-mug','o-radio','o-evi'];
 function seen(id){state.seen.add(id);$(id).classList.add('seen');$('clues').textContent='CLUES '+[...state.seen].filter(x=>OBJ.includes(x)).length+'/6';}
 function unlockObjs(){OBJ.concat(['o-drawer']).forEach(id=>$(id).classList.remove('locked'));}
-$('enter').addEventListener('click',()=>{['ring','chief','hint','radio','unlock','clunk'].forEach(k=>{try{const a=A(k);a.muted=true;const p=a.play();if(p)p.then(()=>{a.pause();a.currentTime=0;a.muted=false;}).catch(()=>{a.muted=false;});}catch(e){}});
+$('enter').addEventListener('click',()=>{['ring','chief','hint','radio','unlock','clunk'].forEach(k=>{try{const a=A(k);a.muted=false;const p=a.play();a.pause();a.currentTime=0;if(p&&p.catch)p.catch(()=>{});}catch(e){}});
  show('desk');state.t0=performance.now();setTimeout(ring,1600);});
 function ring(){if(state.answered&&!state.hintPending)return;$('o-phone').classList.add('ring');play('ring');toast(state.hintPending?'The Chief is calling again…':'Incoming call: THE CHIEF',3000);
  if(!state.answered)state.ringT=setTimeout(()=>toast('Answer the phone, Detective!'),9000);}
